@@ -6,42 +6,91 @@
   <title>10 More Minutes</title>
   <style>
     body {
-      background: #0a0a23;
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      padding: 50px;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9;
+      color: #333;
     }
-    h1 {
-      font-size: 3rem;
-    }
-    p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 20px auto;
-    }
-    .buttons {
-      margin-top: 30px;
-    }
-    .buttons a {
-      display: inline-block;
-      background: #3b82f6;
+    header {
+      background-color: #0a0a23;
       color: white;
-      padding: 15px 30px;
-      margin: 10px;
-      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    header img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+    }
+    h2 {
+      color: #0a0a23;
+    }
+    .button-group {
+      margin: 1.5rem 0;
+    }
+    .button-group a {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #0a0a23;
+      color: white;
       text-decoration: none;
-      font-weight: bold;
+      border-radius: 5px;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #eee;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #0a0a23;
+      text-decoration: none;
+      margin: 0 0.5rem;
     }
   </style>
 </head>
 <body>
-  <h1>10 More Minutes</h1>
-  <p>A peer-to-peer mental health support platform. Free. Human. Real.</p>
-  <div class="buttons">
-    <a href="#">Need Help</a>
-    <a href="#">Help Someone</a>
-  </div>
-  <p style="margin-top: 50px;">© 2025 10 More Minutes</p>
+  <header>
+    <img src="logo.png" alt="10 More Minutes Logo" />
+    <h1>10 More Minutes</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>About</h2>
+      <p>We believe 10 more minutes of kindness can save a life.<br />
+      Inspired by lived experience, we’re building a free support app that connects real people when it matters most.</p>
+    </section>
+
+    <section>
+      <h2>Coming Soon</h2>
+      <p>Sign up to be part of the early beta or support the project.</p>
+      <div class="button-group">
+        <a href="#" id="join-waitlist">Join Waitlist</a>
+        <a href="#" id="support-crowdfund">Support Our Crowdfund</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>How It Works</h2>
+      <ol style="text-align: left; max-width: 500px; margin: auto;">
+        <li>Log in and choose: <strong>Need help</strong> or <strong>Here to help</strong></li>
+        <li>Get matched in real-time</li>
+        <li>Talk for 10 minutes or more</li>
+        <li>Optional support from AI or professional therapists</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 10 More Minutes | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
+  </footer>
 </body>
 </html>
+
