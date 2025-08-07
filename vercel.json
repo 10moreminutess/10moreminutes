@@ -1,14 +1,15 @@
+
 {
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     {
       "source": "/app",
-      "destination": "/app/index.html"
+      "destination": "/app/public/index.html"
     },
     {
       "source": "/app/",
-      "destination": "/app/index.html"
+      "destination": "/app/public/index.html"
     }
   ]
 }
