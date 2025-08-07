@@ -1,14 +1,61 @@
-<div id="root"></div>
-
-<script type="text/babel">
-    const App = () => {
-        return (
-            <div style={{ padding: "20px", fontFamily: "Arial" }}>
-                <h1>Hello 10 More Minutes</h1>
-                <p>This is a test React app.</p>
-            </div>
-        );
-    };
-
-    ReactDOM.render(<App />, document.getElementById('root'));
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 More Minutes - App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .app-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
+        }
+        .status {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 10 More Minutes</h1>
+        <p>Welcome to the beta! Your productivity app is ready.</p>
+        
+        <div class="app-area">
+            <div class="status">✅ App Successfully Loaded!</div>
+            <p>This is your 10 More Minutes app. You can now build your features here.</p>
+        </div>
+    </div>
+</body>
+</html>
