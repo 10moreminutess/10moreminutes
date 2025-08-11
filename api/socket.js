@@ -1,11 +1,12 @@
 import { Server } from 'socket.io'
 
+let io
+
 const SocketHandler = (req, res) => {
-  if (res.socket.server.io) {
-    console.log('Socket is already running')
-  } else {
-    console.log('Socket is initializing')
-    const io = new Server(res.socket.server, {
+  if (!res.socket.server.io) {
+    console.log('*First use, starting socket.io')
+    
+    io = new Server(res.socket.server, {
       path: '/api/socket',
       addTrailingSlash: false,
       cors: {
@@ -13,6 +14,7 @@ const SocketHandler = (req, res) => {
         methods: ["GET", "POST"]
       }
     })
+    
     res.socket.server.io = io
 
     const waitingUsers = { seekers: [], helpers: [] }
@@ -21,7 +23,10 @@ const SocketHandler = (req, res) => {
     io.on('connection', (socket) => {
       console.log('User connected:', socket.id)
       
-      // Broadcast user count
+      // Send initial user count
+      socket.emit('user_count', io.engine.clientsCount)
+      
+      // Broadcast to all users
       io.emit('user_count', io.engine.clientsCount)
 
       socket.on('find_match', ({ userType }) => {
@@ -29,7 +34,6 @@ const SocketHandler = (req, res) => {
         const oppositeType = userType === 'seeker' ? 'helpers' : 'seekers'
         
         if (waitingUsers[oppositeType].length > 0) {
-          // Match found!
           const partner = waitingUsers[oppositeType].shift()
           const chatId = `chat-${Date.now()}`
           
@@ -42,14 +46,12 @@ const SocketHandler = (req, res) => {
           console.log(`Match created: ${socket.id} + ${partner.id}`)
           io.to(chatId).emit('match_found', { chatId })
         } else {
-          // Add to waiting list
           waitingUsers[userType + 's'].push(socket)
           console.log(`${socket.id} added to ${userType}s waiting list`)
         }
       })
 
       socket.on('cancel_match', () => {
-        // Remove from all waiting lists
         Object.values(waitingUsers).forEach(list => {
           const index = list.findIndex(user => user.id === socket.id)
           if (index > -1) {
@@ -86,7 +88,6 @@ const SocketHandler = (req, res) => {
           socket.to(chat.partnerId).emit('partner_disconnected')
           activeChats.delete(socket.id)
           activeChats.delete(chat.partnerId)
-          console.log(`Chat ended: ${socket.id}`)
         }
       })
 
@@ -102,13 +103,11 @@ const SocketHandler = (req, res) => {
       socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id)
         
-        // Remove from waiting lists
         Object.values(waitingUsers).forEach(list => {
           const index = list.findIndex(user => user.id === socket.id)
           if (index > -1) list.splice(index, 1)
         })
         
-        // Handle active chat disconnect
         const chat = activeChats.get(socket.id)
         if (chat) {
           socket.to(chat.partnerId).emit('partner_disconnected')
@@ -119,8 +118,16 @@ const SocketHandler = (req, res) => {
         io.emit('user_count', io.engine.clientsCount)
       })
     })
+  } else {
+    console.log('socket.io already running')
   }
   res.end()
+}
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
 }
 
 export default SocketHandler
