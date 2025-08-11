@@ -1,112 +1,504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>10 More Minutes</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-    header {
-      background-color: #0a0a23;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    header img {
-      max-height: 80px;
-      margin-bottom: 10px;
-    }
-    main {
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
-      text-align: center;
-    }
-    h2 {
-      color: #0a0a23;
-    }
-    .button-group {
-      margin: 1.5rem 0;
-    }
-    .button-group a {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background-color: #0a0a23;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background-color: #eee;
-      font-size: 0.9rem;
-    }
-    footer a {
-      color: #0a0a23;
-      text-decoration: none;
-      margin: 0 0.5rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 More Minutes</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
-<header style="display: flex; justify-content: center; padding: 20px 0;">
-  <img src="logo.png" alt="10 More Minutes logo" style="max-height: 200px; height: auto; width: auto;" />
-  </header>
+    <div id="root"></div>
 
-  <main>
-    <section>
-          <h1>10 More Minutes</h1>
-  <a href="app/beta.html" style="text-decoration: none;">
-    <button style="
-      padding: 10px 20px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    ">
-      Try the Beta
-    </button>
-  </a>
-    </section>
-        
-    <section>
-      <h2>About</h2>
-      <p>We believe 10 more minutes of kindness can save a life.<br />
-      Inspired by lived experience, we’re building a free support app that connects real people when it matters most.</p>
-    </section>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-<section>
-  <h2>Coming Soon</h2>
-  <p>Sign up to be part of the early beta or support the project.</p>
-  <div class="button-group">
-    <a href="mailto:tenmoreminutess@gmail.com?subject=Join%20the%20Beta%20Waitlist" id="join-waitlist">Join Waitlist</a>
-    <a href="mailto:tenmoreminutess@gmail.com?subject=Support%20the%20Crowdfund" id="support-crowdfund">Support Our Crowdfund</a>
-  </div>
-</section>
+        // Simple icon components (same as before)
+        const MessageCircleIcon = () => (
+            <svg className="w-8 h-8 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.418 8-9.38 8a9.38 9.38 0 01-4.632-1.228L3 21l1.228-3.988A9.39 9.39 0 013 12C3 7.582 7.582 3 12 3s9 4.582 9 9z" />
+            </svg>
+        );
 
-    <section>
-      <h2>How It Works</h2>
-      <ol style="text-align: left; max-width: 500px; margin: auto;">
-        <li>Log in and choose: <strong>Need help</strong> or <strong>Here to help</strong></li>
-        <li>Get matched in real-time</li>
-        <li>Talk for 10 minutes or more</li>
-        <li>Optional support from AI or professional therapists</li>
-      </ol>
-    </section>
-  </main>
+        const HeartIcon = () => (
+            <svg className="w-8 h-8 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+        );
 
-  <footer>
-    <p>© 2025 10 More Minutes | <a href="#">Privacy Policy</a> | <a href="#">Contact</a></p>
-  </footer>
+        const ClockIcon = () => (
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const ShieldIcon = () => (
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+        );
+
+        const UsersIcon = () => (
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        );
+
+        const AlertTriangleIcon = () => (
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.732 18.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+        );
+
+        const SendIcon = () => (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+        );
+
+        const Logo = () => (
+            <div className="relative w-20 h-20 mx-auto mb-4">
+                <div className="w-20 h-20 rounded-full border-4 border-blue-400 relative flex items-center justify-center">
+                    <div className="text-blue-400 font-bold text-2xl">10</div>
+                </div>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-blue-400 font-bold text-sm">
+                    More Minutes
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [screen, setScreen] = useState('home');
+            const [userType, setUserType] = useState(null);
+            const [isMatching, setIsMatching] = useState(false);
+            const [messages, setMessages] = useState([]);
+            const [currentMessage, setCurrentMessage] = useState('');
+            const [timeRemaining, setTimeRemaining] = useState(600); // 10 minutes
+            const [connectionStatus, setConnectionStatus] = useState('disconnected');
+            const [isTyping, setIsTyping] = useState(false);
+            const [onlineUsers, setOnlineUsers] = useState(0);
+            
+            const socketRef = useRef(null);
+            const messagesEndRef = useRef(null);
+            const timerRef = useRef(null);
+            const typingTimeoutRef = useRef(null);
+
+            // Socket.IO connection and event handlers
+            useEffect(() => {
+                // Connect to Vercel API route
+                const SOCKET_URL = window.location.origin;
+                console.log('Connecting to Socket.IO at:', SOCKET_URL);
+                
+                // Initialize socket connection
+                socketRef.current = io(SOCKET_URL, {
+                    path: '/api/socket',
+                    transports: ['websocket', 'polling']
+                });
+
+                const socket = socketRef.current;
+
+                // Connection events
+                socket.on('connect', () => {
+                    console.log('✅ Socket.IO connected successfully!', socket.id);
+                    setConnectionStatus('connected');
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.error('❌ Socket.IO connection error:', error);
+                    setConnectionStatus('error');
+                });
+
+                socket.on('disconnect', () => {
+                    console.log('🔌 Socket.IO disconnected');
+                    setConnectionStatus('disconnected');
+                });
+
+                socket.on('user_count', (count) => {
+                    console.log('👥 Online users:', count);
+                    setOnlineUsers(count);
+                });
+
+                // Matching events
+                socket.on('match_found', (data) => {
+                    console.log('🎉 Match found!', data);
+                    setIsMatching(false);
+                    setScreen('chat');
+                    setMessages([
+                        { 
+                            type: 'system', 
+                            text: '🎉 Connected! You can now chat with each other. Remember: be kind and respectful.',
+                            timestamp: Date.now()
+                        }
+                    ]);
+                    startTimer();
+                });
+
+                socket.on('match_timeout', () => {
+                    console.log('⏰ Match timeout');
+                    setIsMatching(false);
+                    setScreen('home');
+                    alert('No match found at the moment. Please try again later.');
+                });
+
+                // Chat events
+                socket.on('message', (data) => {
+                    console.log('💬 Message received:', data);
+                    setMessages(prev => [...prev, {
+                        type: 'other',
+                        text: data.message,
+                        timestamp: data.timestamp
+                    }]);
+                });
+
+                socket.on('user_typing', (isTyping) => {
+                    setIsTyping(isTyping);
+                });
+
+                socket.on('partner_disconnected', () => {
+                    setMessages(prev => [...prev, {
+                        type: 'system',
+                        text: '💔 Your chat partner has disconnected. Take care!',
+                        timestamp: Date.now()
+                    }]);
+                });
+
+                socket.on('session_ended', () => {
+                    setMessages(prev => [...prev, {
+                        type: 'system',
+                        text: '⏰ Time\'s up! Thanks for connecting and supporting each other.',
+                        timestamp: Date.now()
+                    }]);
+                    stopTimer();
+                });
+
+                // Cleanup
+                return () => {
+                    if (socket) {
+                        socket.disconnect();
+                    }
+                    if (timerRef.current) {
+                        clearInterval(timerRef.current);
+                    }
+                };
+            }, []);
+
+            // Auto-scroll to bottom of messages
+            useEffect(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [messages]);
+
+            const startTimer = () => {
+                timerRef.current = setInterval(() => {
+                    setTimeRemaining(prev => {
+                        if (prev <= 1) {
+                            clearInterval(timerRef.current);
+                            if (socketRef.current) {
+                                socketRef.current.emit('end_session');
+                            }
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+            };
+
+            const stopTimer = () => {
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                    timerRef.current = null;
+                }
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const sendMessage = () => {
+                if (currentMessage.trim() && socketRef.current && socketRef.current.connected) {
+                    const messageData = {
+                        message: currentMessage,
+                        timestamp: Date.now()
+                    };
+                    
+                    console.log('📤 Sending message:', messageData);
+                    socketRef.current.emit('send_message', messageData);
+                    setMessages(prev => [...prev, { 
+                        type: 'user', 
+                        text: currentMessage,
+                        timestamp: messageData.timestamp 
+                    }]);
+                    setCurrentMessage('');
+                    
+                    // Stop typing indicator
+                    socketRef.current.emit('stop_typing');
+                } else {
+                    console.error('❌ Cannot send message - not connected or empty message');
+                }
+            };
+
+            const handleTyping = (value) => {
+                setCurrentMessage(value);
+                
+                if (socketRef.current) {
+                    // Send typing indicator
+                    socketRef.current.emit('typing');
+                    
+                    // Clear previous timeout
+                    if (typingTimeoutRef.current) {
+                        clearTimeout(typingTimeoutRef.current);
+                    }
+                    
+                    // Stop typing after 1 second of no activity
+                    typingTimeoutRef.current = setTimeout(() => {
+                        socketRef.current.emit('stop_typing');
+                    }, 1000);
+                }
+            };
+
+            const startMatching = (type) => {
+                setUserType(type);
+                setIsMatching(true);
+                setScreen('matching');
+                
+                if (socketRef.current && socketRef.current.connected) {
+                    console.log('🔍 Looking for match as:', type);
+                    socketRef.current.emit('find_match', { userType: type });
+                } else {
+                    console.error('❌ Socket not connected, cannot find match');
+                    alert('Not connected to server. Please refresh and try again.');
+                    setIsMatching(false);
+                    setScreen('home');
+                }
+            };
+
+            const cancelMatching = () => {
+                setIsMatching(false);
+                setScreen('home');
+                
+                if (socketRef.current) {
+                    socketRef.current.emit('cancel_match');
+                }
+            };
+
+            const leaveChat = () => {
+                if (socketRef.current) {
+                    socketRef.current.emit('leave_chat');
+                }
+                
+                setScreen('home');
+                setMessages([]);
+                setTimeRemaining(600);
+                setUserType(null);
+                stopTimer();
+            };
+
+            if (screen === 'matching') {
+                return (
+                    <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
+                        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6 flex flex-col justify-center items-center">
+                            <div className="text-center">
+                                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto mb-6"></div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">Finding someone for you...</h2>
+                                <p className="text-gray-600 mb-4">
+                                    Looking for {userType === 'seeker' ? 'someone to listen' : 'someone who needs support'}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    {onlineUsers} people online now
+                                </p>
+                            </div>
+                            
+                            <button 
+                                onClick={cancelMatching}
+                                className="absolute top-6 left-6 text-gray-500 hover:text-gray-700 bg-white rounded-full p-2 shadow-md"
+                            >
+                                ← Back
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (screen === 'chat') {
+                return (
+                    <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
+                        <div className="min-h-screen bg-gray-50 flex flex-col">
+                            {/* Header */}
+                            <div className="bg-white p-4 shadow-sm flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <div className={`w-3 h-3 rounded-full mr-3 ${
+                                        connectionStatus === 'connected' ? 'bg-green-400' : 'bg-red-400'
+                                    }`}></div>
+                                    <span className="font-semibold text-gray-800">
+                                        {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'}
+                                    </span>
+                                </div>
+                                
+                                <div className="flex items-center bg-blue-100 px-3 py-1 rounded-full">
+                                    <ClockIcon />
+                                    <span className={`font-mono text-sm ${timeRemaining <= 60 ? 'text-red-600 font-bold' : 'text-blue-800'}`}>
+                                        {formatTime(timeRemaining)}
+                                    </span>
+                                </div>
+
+                                <button 
+                                    onClick={leaveChat}
+                                    className="text-red-500 hover:text-red-700 text-sm font-medium"
+                                >
+                                    Leave
+                                </button>
+                            </div>
+
+                            {/* Messages */}
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                {messages.map((msg, idx) => (
+                                    <div key={idx} className={
+                                        msg.type === 'system' ? 'text-center' :
+                                        msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'
+                                    }>
+                                        {msg.type === 'system' ? (
+                                            <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg text-sm max-w-xs mx-auto">
+                                                {msg.text}
+                                            </div>
+                                        ) : (
+                                            <div className={`max-w-xs px-4 py-2 rounded-2xl ${
+                                                msg.type === 'user' 
+                                                    ? 'bg-blue-500 text-white' 
+                                                    : 'bg-white text-gray-800 shadow-sm'
+                                            }`}>
+                                                {msg.text}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                
+                                {/* Typing indicator */}
+                                {isTyping && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded-2xl max-w-xs">
+                                            <div className="flex space-x-1">
+                                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            {/* Input */}
+                            {timeRemaining > 0 ? (
+                                <div className="bg-white p-4 border-t">
+                                    <div className="flex space-x-2">
+                                        <input
+                                            type="text"
+                                            value={currentMessage}
+                                            onChange={(e) => handleTyping(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                            placeholder="Type your message..."
+                                            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-blue-500"
+                                            disabled={connectionStatus !== 'connected'}
+                                        />
+                                        <button 
+                                            onClick={sendMessage}
+                                            disabled={!currentMessage.trim() || connectionStatus !== 'connected'}
+                                            className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors disabled:bg-gray-300"
+                                        >
+                                            <SendIcon />
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="bg-white p-4 border-t text-center">
+                                    <button 
+                                        onClick={leaveChat}
+                                        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                                    >
+                                        Return Home
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
+                    <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 p-6 flex flex-col">
+                        <div className="text-center mb-8 mt-12">
+                            <Logo />
+                            <h1 className="text-3xl font-bold text-blue-400 mb-2">10 More Minutes</h1>
+                            <p className="text-slate-300 text-lg">Get through the next 10 minutes together</p>
+                            
+                            {/* Connection status */}
+                            <div className="mt-4 flex items-center justify-center space-x-2">
+                                <div className={`w-2 h-2 rounded-full ${
+                                    connectionStatus === 'connected' ? 'bg-green-400' : 'bg-red-400'
+                                }`}></div>
+                                <span className="text-slate-400 text-sm">
+                                    {connectionStatus === 'connected' ? 'Online' : 'Connecting...'}
+                                </span>
+                                <span className="text-slate-500 text-sm">
+                                    ({onlineUsers} online)
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 flex flex-col justify-center space-y-6">
+                            <button 
+                                onClick={() => startMatching('seeker')}
+                                disabled={connectionStatus !== 'connected'}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <MessageCircleIcon />
+                                <h3 className="text-xl font-semibold mb-2">I need support</h3>
+                                <p className="text-blue-100">Connect with someone who can listen</p>
+                            </button>
+
+                            <button 
+                                onClick={() => startMatching('helper')}
+                                disabled={connectionStatus !== 'connected'}
+                                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <HeartIcon />
+                                <h3 className="text-xl font-semibold mb-2">I can give support</h3>
+                                <p className="text-teal-100">Help someone through their moment</p>
+                            </button>
+                        </div>
+
+                        <div className="flex justify-around mt-8 text-sm text-slate-400">
+                            <div className="flex items-center">
+                                <ShieldIcon />
+                                <span>Anonymous</span>
+                            </div>
+                            
+                            <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600" title="Emergency">
+                                <AlertTriangleIcon />
+                            </button>
+                            
+                            <div className="flex items-center">
+                                <ClockIcon />
+                                <span>10 minutes</span>
+                            </div>
+                            
+                            <div className="flex items-center">
+                                <UsersIcon />
+                                <span>Safe space</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
-
