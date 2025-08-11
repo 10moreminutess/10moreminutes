@@ -1,256 +1,152 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, Heart, MessageCircle, Shield, Users, Phone, Star, AlertTriangle, Gift, Play, CreditCard, Coffee, Mic, MicOff } from 'lucide-react';
+import { 
+  MessageCircle, 
+  Heart, 
+  Clock, 
+  Shield, 
+  Users, 
+  AlertTriangle, 
+  Send 
+} from 'lucide-react';
+import io from 'socket.io-client';
+import './App.css';
 
-// Socket.io client simulation (in real app, install: npm install socket.io-client)
-const simulateSocket = () => {
-  const events = {};
-  return {
-    emit: (event, data) => {
-      console.log('Socket emit:', event, data);
-      // Simulate server responses
-      if (event === 'find-match') {
-        setTimeout(() => {
-          if (events['matched']) events['matched']({ roomId: `room_${Date.now()}` });
-        }, 3000);
-      }
-    },
-    on: (event, callback) => {
-      events[event] = callback;
-    },
-    off: (event) => {
-      delete events[event];
-    }
-  };
-};
+const Logo = () => (
+  <div className="relative w-20 h-20 mx-auto mb-4">
+    <div className="w-20 h-20 rounded-full border-4 border-blue-400 relative flex items-center justify-center">
+      <div className="text-blue-400 font-bold text-2xl">10</div>
+    </div>
+    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-blue-400 font-bold text-sm">
+      More Minutes
+    </div>
+  </div>
+);
 
-const TenMoreMinutesApp = () => {
-  const [currentScreen, setCurrentScreen] = useState('home');
+const App = () => {
+  const [screen, setScreen] = useState('home');
   const [userType, setUserType] = useState(null);
   const [isMatching, setIsMatching] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(600); // 10 minutes in seconds
-  const [isTrainingComplete, setIsTrainingComplete] = useState(false);
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState('');
-  const [showExtensionRequest, setShowExtensionRequest] = useState(false);
-  const [userWantsExtension, setUserWantsExtension] = useState(null);
-  const [otherUserWantsExtension, setOtherUserWantsExtension] = useState(null);
-  const [extensionCount, setExtensionCount] = useState(0);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [isWatchingAd, setIsWatchingAd] = useState(false);
-
-  // Missing state variables that were referenced but not defined
-  const [socket, setSocket] = useState(null);
-  const [roomId, setRoomId] = useState(null);
-  const [isCallActive, setIsCallActive] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(600);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
-  const [isMuted, setIsMuted] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(0);
+  
+  const socketRef = useRef(null);
+  const messagesEndRef = useRef(null);
+  const timerRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
-  // Missing refs that were referenced but not defined
-  const peerConnectionRef = useRef(null);
-  const localStreamRef = useRef(null);
-  const remoteStreamRef = useRef(null);
-  const localAudioRef = useRef(null);
-  const remoteAudioRef = useRef(null);
-
-  // Missing helper functions
-  const watchAd = () => {
-    setIsWatchingAd(true);
-    setTimeout(() => {
-      setIsWatchingAd(false);
-      alert('Thanks for watching! This helps keep the service free. 💙');
-    }, 3000);
-  };
-
-  const makeDonation = (amount) => {
-    alert(`Thank you for your ${amount} donation! 💙\nThis would redirect to a secure payment processor in the real app.`);
-  };
-
-  // Initialize socket connection
+  // Socket.IO connection
   useEffect(() => {
-    // In real app: const socket = io('your-server-url');
-    const socketInstance = simulateSocket();
-    setSocket(socketInstance);
+    const SOCKET_URL = process.env.NODE_ENV === 'production' 
+      ? window.location.origin 
+      : 'http://localhost:3001';
+    
+    socketRef.current = io(SOCKET_URL, {
+      path: '/api/socket',
+      transports: ['websocket', 'polling']
+    });
 
-    socketInstance.on('matched', ({ roomId }) => {
-      console.log('Matched with room:', roomId);
-      setRoomId(roomId);
+    const socket = socketRef.current;
+
+    socket.on('connect', () => {
+      setConnectionStatus('connected');
+    });
+
+    socket.on('disconnect', () => {
+      setConnectionStatus('disconnected');
+    });
+
+    socket.on('user_count', (count) => {
+      setOnlineUsers(count);
+    });
+
+    socket.on('match_found', (data) => {
       setIsMatching(false);
-      initializeWebRTC();
+      setScreen('chat');
+      setMessages([
+        { 
+          type: 'system', 
+          text: '🎉 Connected! You can now chat with each other. Remember: be kind and respectful.',
+          timestamp: Date.now()
+        }
+      ]);
+      startTimer();
     });
 
-    socketInstance.on('message', (message) => {
-      setMessages(prev => [...prev, { type: 'other', text: message }]);
+    socket.on('match_timeout', () => {
+      setIsMatching(false);
+      setScreen('home');
+      alert('No match found at the moment. Please try again later.');
     });
 
-    socketInstance.on('webrtc-offer', async (offer) => {
-      if (peerConnectionRef.current) {
-        await peerConnectionRef.current.setRemoteDescription(offer);
-        const answer = await peerConnectionRef.current.createAnswer();
-        await peerConnectionRef.current.setLocalDescription(answer);
-        socketInstance.emit('webrtc-answer', answer, roomId);
-      }
+    socket.on('message', (data) => {
+      setMessages(prev => [...prev, {
+        type: 'other',
+        text: data.message,
+        timestamp: data.timestamp
+      }]);
     });
 
-    socketInstance.on('webrtc-answer', async (answer) => {
-      if (peerConnectionRef.current) {
-        await peerConnectionRef.current.setRemoteDescription(answer);
-      }
+    socket.on('user_typing', (isTyping) => {
+      setIsTyping(isTyping);
     });
 
-    socketInstance.on('ice-candidate', (candidate) => {
-      if (peerConnectionRef.current) {
-        peerConnectionRef.current.addIceCandidate(candidate);
-      }
+    socket.on('partner_disconnected', () => {
+      setMessages(prev => [...prev, {
+        type: 'system',
+        text: '💔 Your chat partner has disconnected. Take care!',
+        timestamp: Date.now()
+      }]);
+    });
+
+    socket.on('session_ended', () => {
+      setMessages(prev => [...prev, {
+        type: 'system',
+        text: '⏰ Time\'s up! Thanks for connecting and supporting each other.',
+        timestamp: Date.now()
+      }]);
+      stopTimer();
     });
 
     return () => {
-      if (socketInstance) {
-        socketInstance.off('matched');
-        socketInstance.off('message');
-        socketInstance.off('webrtc-offer');
-        socketInstance.off('webrtc-answer');
-        socketInstance.off('ice-candidate');
+      if (socket) {
+        socket.disconnect();
       }
-      cleanup();
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
     };
   }, []);
 
-  // WebRTC initialization
-  const initializeWebRTC = async () => {
-    try {
-      // Get user media (audio only for now)
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      localStreamRef.current = stream;
-      
-      if (localAudioRef.current) {
-        localAudioRef.current.srcObject = stream;
-      }
-
-      // Create peer connection
-      const peerConnection = new RTCPeerConnection({
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' }
-        ]
-      });
-
-      peerConnectionRef.current = peerConnection;
-
-      // Add local stream to peer connection
-      stream.getTracks().forEach(track => {
-        peerConnection.addTrack(track, stream);
-      });
-
-      // Handle remote stream
-      peerConnection.ontrack = (event) => {
-        console.log('Received remote stream');
-        remoteStreamRef.current = event.streams[0];
-        if (remoteAudioRef.current) {
-          remoteAudioRef.current.srcObject = event.streams[0];
-        }
-        setIsCallActive(true);
-        setIsConnected(true);
-        setCurrentScreen('chat');
-        setConnectionStatus('connected');
-        
-        setMessages([
-          { type: 'system', text: '🎙️ Voice connection established! You can now talk to each other.' }
-        ]);
-      };
-
-      // Handle ICE candidates
-      peerConnection.onicecandidate = (event) => {
-        if (event.candidate && socket) {
-          socket.emit('ice-candidate', event.candidate, roomId);
-        }
-      };
-
-      // Handle connection state changes
-      peerConnection.onconnectionstatechange = () => {
-        console.log('Connection state:', peerConnection.connectionState);
-        setConnectionStatus(peerConnection.connectionState);
-      };
-
-      // Create and send offer (first person to connect)
-      if (userType === 'seeker') {
-        const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
-        socket.emit('webrtc-offer', offer, roomId);
-      }
-
-    } catch (error) {
-      console.error('Error initializing WebRTC:', error);
-      setConnectionStatus('error');
-      // Fallback to text-only chat
-      setIsConnected(true);
-      setCurrentScreen('chat');
-      setMessages([
-        { type: 'system', text: '📱 Voice connection unavailable, using text chat instead. This is normal on some networks!' }
-      ]);
-    }
-  };
-
-  // Cleanup WebRTC resources
-  const cleanup = () => {
-    if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach(track => track.stop());
-    }
-    if (peerConnectionRef.current) {
-      peerConnectionRef.current.close();
-    }
-    setIsCallActive(false);
-    setConnectionStatus('disconnected');
-  };
-
-  // Toggle mute
-  const toggleMute = () => {
-    if (localStreamRef.current) {
-      const audioTrack = localStreamRef.current.getAudioTracks()[0];
-      if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsMuted(!audioTrack.enabled);
-      }
-    }
-  };
-
-  // Timer effect for conversation
+  // Auto-scroll to bottom
   useEffect(() => {
-    if (isConnected && timeRemaining > 0) {
-      const timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev === 31 && !showExtensionRequest) {
-            setShowExtensionRequest(true);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const startTimer = () => {
+    timerRef.current = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          if (socketRef.current) {
+            socketRef.current.emit('end_session');
           }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [isConnected, timeRemaining, showExtensionRequest]);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
-  // Handle extension logic
-  useEffect(() => {
-    if (userWantsExtension !== null && otherUserWantsExtension !== null) {
-      if (userWantsExtension && otherUserWantsExtension) {
-        setTimeRemaining(600);
-        setExtensionCount(prev => prev + 1);
-        setMessages(prev => [...prev, { 
-          type: 'system', 
-          text: `🎉 You both agreed to continue! Another 10 minutes added. (Extension ${extensionCount + 1})` 
-        }]);
-      } else {
-        setMessages(prev => [...prev, { 
-          type: 'system', 
-          text: 'One person chose not to extend. The session will end when time runs out.' 
-        }]);
-      }
-      setShowExtensionRequest(false);
-      setUserWantsExtension(null);
-      setOtherUserWantsExtension(null);
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  }, [userWantsExtension, otherUserWantsExtension, extensionCount]);
+  };
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -258,491 +154,266 @@ const TenMoreMinutesApp = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Custom logo component based on the uploaded design
-  const LogoComponent = () => (
-    <div className="relative w-20 h-20 mx-auto mb-4">
-      <div className="w-20 h-20 rounded-full border-4 border-blue-400 relative">
-        {/* Clock hands */}
-        <div className="absolute top-2 left-1/2 w-0.5 h-6 bg-blue-400 origin-bottom transform -translate-x-1/2 rotate-12"></div>
-        <div className="absolute top-6 left-1/2 w-0.5 h-4 bg-blue-400 origin-bottom transform -translate-x-1/2 -rotate-12"></div>
-        
-        {/* Text around the circle */}
-        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 text-blue-400 font-bold text-lg">10</div>
-        <div className="absolute top-4 -left-2 text-blue-400 font-bold text-sm transform -rotate-45">More</div>
-        <div className="absolute bottom-2 -right-3 text-blue-400 font-bold text-sm transform rotate-45">Minutes</div>
-      </div>
-    </div>
-  );
-
-  const handleMatching = () => {
-    setIsMatching(true);
-    if (socket) {
-      socket.emit('find-match', { userType, preferences: {} });
+  const sendMessage = () => {
+    if (currentMessage.trim() && socketRef.current) {
+      const messageData = {
+        message: currentMessage,
+        timestamp: Date.now()
+      };
+      
+      socketRef.current.emit('send_message', messageData);
+      setMessages(prev => [...prev, { 
+        type: 'user', 
+        text: currentMessage,
+        timestamp: messageData.timestamp 
+      }]);
+      setCurrentMessage('');
+      
+      socketRef.current.emit('stop_typing');
     }
   };
 
-  const sendMessage = () => {
-    if (currentMessage.trim()) {
-      const message = { type: 'user', text: currentMessage };
-      setMessages(prev => [...prev, message]);
+  const handleTyping = (value) => {
+    setCurrentMessage(value);
+    
+    if (socketRef.current) {
+      socketRef.current.emit('typing');
       
-      // Send to other user via socket
-      if (socket && roomId) {
-        socket.emit('message', currentMessage, roomId);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
       }
       
-      setCurrentMessage('');
+      typingTimeoutRef.current = setTimeout(() => {
+        socketRef.current.emit('stop_typing');
+      }, 1000);
     }
   };
 
-  const resetApp = () => {
-    setCurrentScreen('home');
-    setIsConnected(false);
-    setTimeRemaining(600);
-    setMessages([]);
-    setUserType(null);
-    setShowExtensionRequest(false);
-    setUserWantsExtension(null);
-    setOtherUserWantsExtension(null);
-    setExtensionCount(0);
-    setShowFeedback(false);
-    setRating(0);
-    setRoomId(null);
-    setIsCallActive(false);
-    setConnectionStatus('disconnected');
-    setIsMatching(false);
-    cleanup();
+  const startMatching = (type) => {
+    setUserType(type);
+    setIsMatching(true);
+    setScreen('matching');
+    
+    if (socketRef.current) {
+      socketRef.current.emit('find_match', { userType: type });
+    }
   };
 
-  const HomeScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 p-6 flex flex-col">
-      <div className="text-center mb-8 mt-12">
-        <LogoComponent />
-        <h1 className="text-3xl font-bold text-blue-400 mb-2">10 More Minutes</h1>
-        <p className="text-slate-300 text-lg">Get through the next 10 minutes together</p>
-      </div>
+  const cancelMatching = () => {
+    setIsMatching(false);
+    setScreen('home');
+    
+    if (socketRef.current) {
+      socketRef.current.emit('cancel_match');
+    }
+  };
 
-      <div className="flex-1 flex flex-col justify-center space-y-6">
-        <button 
-          onClick={() => {
-            setUserType('seeker');
-            setCurrentScreen('matching');
-          }}
-          className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-blue-500"
-        >
-          <MessageCircle className="w-8 h-8 mx-auto mb-3" />
-          <h3 className="text-xl font-semibold mb-2">I need support</h3>
-          <p className="text-blue-100">Connect with someone who can listen</p>
-        </button>
+  const leaveChat = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('leave_chat');
+    }
+    
+    setScreen('home');
+    setMessages([]);
+    setTimeRemaining(600);
+    setUserType(null);
+    stopTimer();
+  };
 
-        <button 
-          onClick={() => {
-            setUserType('helper');
-            if (!isTrainingComplete) {
-              setCurrentScreen('training');
-            } else {
-              setCurrentScreen('matching');
-            }
-          }}
-          className="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-teal-500"
-        >
-          <Heart className="w-8 h-8 mx-auto mb-3" />
-          <h3 className="text-xl font-semibold mb-2">I can give support</h3>
-          <p className="text-teal-100">Help someone through their moment</p>
-        </button>
-      </div>
-
-      <div className="flex justify-around mt-8 text-sm text-slate-400">
-        <div className="flex items-center">
-          <Shield className="w-4 h-4 mr-1" />
-          <span>Anonymous</span>
-        </div>
-        
-        <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600" title="Emergency Help">
-          <AlertTriangle className="w-4 h-4" />
-        </button>
-        <div className="flex items-center">
-          <Clock className="w-4 h-4 mr-1" />
-          <span>10 minutes</span>
-        </div>
-        <div className="flex items-center">
-          <Users className="w-4 h-4 mr-1" />
-          <span>Safe space</span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const TrainingScreen = () => (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <Shield className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Helper Training</h2>
-          <p className="text-gray-600">Learn how to provide effective support</p>
-        </div>
-
-        <div className="space-y-6">
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-green-800 mb-2">Key Principles</h3>
-            <ul className="text-green-700 space-y-1 text-sm">
-              <li>• Listen without judgment</li>
-              <li>• Ask open-ended questions</li>
-              <li>• Validate their feelings</li>
-              <li>• Don't give advice unless asked</li>
-              <li>• Maintain boundaries</li>
-            </ul>
-          </div>
-
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-yellow-800 mb-2">Red Flags</h3>
-            <ul className="text-yellow-700 space-y-1 text-sm">
-              <li>• Mentions of self-harm or suicide</li>
-              <li>• Immediate danger</li>
-              <li>• Inappropriate content</li>
-              <li>• Requests for personal information</li>
-            </ul>
-          </div>
-
-          <div className="bg-red-50 p-4 rounded-lg">
-            <div className="flex items-center mb-2">
-              <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
-              <h3 className="font-semibold text-red-800">Emergency Escalation</h3>
-            </div>
-            <p className="text-red-700 text-sm">
-              If someone mentions harm to themselves or others, immediately use the emergency button to connect them with professional help.
-            </p>
-          </div>
-        </div>
-
-        <button 
-          onClick={() => {
-            setIsTrainingComplete(true);
-            setCurrentScreen('matching');
-          }}
-          className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold mt-8 hover:bg-green-600 transition-colors"
-        >
-          Complete Training & Continue
-        </button>
-        
-        <button 
-          onClick={() => setCurrentScreen('home')}
-          className="w-full text-gray-500 py-2 mt-4 hover:text-gray-700"
-        >
-          ← Back to Home
-        </button>
-      </div>
-    </div>
-  );
-
-  const MatchingScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6 flex flex-col justify-center items-center">
-      <div className="text-center">
-        {isMatching ? (
-          <>
+  if (screen === 'matching') {
+    return (
+      <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6 flex flex-col justify-center items-center">
+          <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto mb-6"></div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Finding someone for you...</h2>
-            <p className="text-gray-600">This usually takes just a few seconds</p>
-          </>
-        ) : (
-          <>
-            <Users className="w-16 h-16 text-purple-500 mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {userType === 'seeker' ? 'Ready to connect?' : 'Ready to help?'}
-            </h2>
-            <p className="text-gray-600 mb-8">
-              {userType === 'seeker' 
-                ? 'You\'ll be matched with someone who wants to listen'
-                : 'You\'ll be matched with someone who needs support'
-              }
+            <p className="text-gray-600 mb-4">
+              Looking for {userType === 'seeker' ? 'someone to listen' : 'someone who needs support'}
             </p>
-            <button 
-              onClick={handleMatching}
-              className="bg-purple-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors"
-            >
-              Find My Match
-            </button>
-          </>
-        )}
-      </div>
-      
-      <button 
-        onClick={() => setCurrentScreen('home')}
-        className="absolute top-6 left-6 text-gray-500 hover:text-gray-700"
-      >
-        ← Back
-      </button>
-    </div>
-  );
-
-  const ChatScreen = () => (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <div className="bg-white p-4 shadow-sm flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
-          <span className="font-semibold text-gray-800">Connected</span>
-          {isCallActive && (
-            <button 
-              onClick={toggleMute}
-              className={`ml-4 p-2 rounded-full ${isMuted ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}
-            >
-              {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            </button>
-          )}
-        </div>
-        
-        <div className="flex space-x-4">
-          <div className="flex items-center bg-blue-100 px-3 py-1 rounded-full">
-            <Clock className="w-4 h-4 text-blue-600 mr-1" />
-            <span className={`font-mono text-sm ${timeRemaining <= 60 ? 'text-red-600 font-bold' : 'text-blue-800'}`}>
-              {formatTime(timeRemaining)}
-            </span>
+            <p className="text-sm text-gray-500">
+              {onlineUsers} people online now
+            </p>
           </div>
           
-          {extensionCount > 0 && (
-            <div className="flex items-center bg-green-100 px-3 py-1 rounded-full">
-              <span className="text-green-800 text-sm font-semibold">+{extensionCount}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Hidden audio elements for WebRTC */}
-      <audio ref={localAudioRef} autoPlay muted style={{ display: 'none' }} />
-      <audio ref={remoteAudioRef} autoPlay style={{ display: 'none' }} />
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`${
-            msg.type === 'system' ? 'text-center' :
-            msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'
-          }`}>
-            {msg.type === 'system' ? (
-              <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg text-sm max-w-xs">
-                {msg.text}
-              </div>
-            ) : (
-              <div className={`max-w-xs px-4 py-2 rounded-2xl ${
-                msg.type === 'user' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-white text-gray-800 shadow-sm'
-              }`}>
-                {msg.text}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Input */}
-      <div className="bg-white p-4 border-t">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={currentMessage}
-            onChange={(e) => setCurrentMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type your message..."
-            className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-blue-500"
-          />
           <button 
-            onClick={sendMessage}
-            className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+            onClick={cancelMatching}
+            className="absolute top-6 left-6 text-gray-500 hover:text-gray-700 bg-white rounded-full p-2 shadow-md"
           >
-            <MessageCircle className="w-5 h-5" />
+            ← Back
           </button>
         </div>
       </div>
+    );
+  }
 
-      {/* Extension Request Modal */}
-      {showExtensionRequest && userWantsExtension === null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full text-center">
-            <LogoComponent />
-            <h3 className="text-xl font-bold mb-2">10 More Minutes?</h3>
-            <p className="text-gray-600 mb-6">
-              Would you like to extend this conversation for another 10 minutes? 
-              Both people need to agree.
-            </p>
-            <div className="flex space-x-4">
-              <button 
-                onClick={() => {
-                  setUserWantsExtension(true);
-                  setTimeout(() => {
-                    setOtherUserWantsExtension(Math.random() > 0.3);
-                  }, 2000);
-                }}
-                className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-              >
-                Yes, continue
-              </button>
-              <button 
-                onClick={() => {
-                  setUserWantsExtension(false);
-                  setTimeout(() => {
-                    setOtherUserWantsExtension(Math.random() > 0.3);
-                  }, 2000);
-                }}
-                className="flex-1 bg-gray-500 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
-              >
-                No, thanks
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Waiting for other person's response */}
-      {showExtensionRequest && userWantsExtension !== null && otherUserWantsExtension === null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <h3 className="text-xl font-bold mb-2">Waiting...</h3>
-            <p className="text-gray-600">
-              {userWantsExtension 
-                ? "You want to continue. Waiting for the other person to decide..."
-                : "You chose to end the session. Waiting for the other person's response..."
-              }
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Session Complete Modal */}
-      {timeRemaining === 0 && !showExtensionRequest && userWantsExtension === null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 p-4">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full text-center">
-            <LogoComponent />
-            <h3 className="text-xl font-bold mb-4">Session Complete</h3>
-            <p className="text-gray-600 mb-2">Thanks for connecting!</p>
-            {extensionCount > 0 && (
-              <p className="text-sm text-blue-600 mb-4">
-                You extended {extensionCount} time{extensionCount > 1 ? 's' : ''} - amazing! 🎉
-              </p>
-            )}
-            
-            <button 
-              onClick={() => setShowFeedback(true)}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors mb-4"
-            >
-              Leave Feedback
-            </button>
-            
-            <button 
-              onClick={resetApp}
-              className="w-full bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-            >
-              Skip & Return Home
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Feedback Modal */}
-      {showFeedback && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full text-center">
-            <LogoComponent />
-            <h3 className="text-xl font-bold mb-4">How was your experience?</h3>
-            
-            {/* Star Rating */}
-            <div className="flex justify-center space-x-2 mb-6">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  className="transform hover:scale-110 transition-transform focus:outline-none"
-                >
-                  <Star 
-                    className={`w-8 h-8 ${star <= rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                  />
-                </button>
-              ))}
+  if (screen === 'chat') {
+    return (
+      <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+          <div className="bg-white p-4 shadow-sm flex items-center justify-between">
+            <div className="flex items-center">
+              <div className={`w-3 h-3 rounded-full mr-3 ${
+                connectionStatus === 'connected' ? 'bg-green-400' : 'bg-red-400'
+              }`}></div>
+              <span className="font-semibold text-gray-800">
+                {connectionStatus === 'connected' ? 'Connected' : 'Disconnected'}
+              </span>
             </div>
             
-            {rating > 0 && (
-              <p className="text-sm text-gray-600 mb-6">
-                Thank you for rating us {rating} star{rating > 1 ? 's' : ''}! 
-                {rating >= 4 ? ' We\'re so glad we could help! 😊' : ' We\'ll keep working to improve. 💙'}
-              </p>
-            )}
+            <div className="flex items-center bg-blue-100 px-3 py-1 rounded-full">
+              <Clock className="w-4 h-4 mr-1" />
+              <span className={`font-mono text-sm ${timeRemaining <= 60 ? 'text-red-600 font-bold' : 'text-blue-800'}`}>
+                {formatTime(timeRemaining)}
+              </span>
+            </div>
 
-            {/* Support Section */}
-            <div className="border-t pt-4 mb-4">
-              <p className="text-sm text-gray-600 mb-4">
-                💙 If you have time, please help support us:
-              </p>
-              
-              <div className="space-y-3">
-                <button 
-                  onClick={watchAd}
-                  className="w-full flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
-                >
-                  {isWatchingAd ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Watching ad...
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 mr-2" />
-                      Watch a quick ad
-                    </>
-                  )}
-                </button>
-                
-                <div className="flex space-x-2">
-                  <button 
-                    onClick={() => makeDonation('£2')}
-                    className="flex-1 bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                  >
-                    £2
-                  </button>
-                  <button 
-                    onClick={() => makeDonation('£5')}
-                    className="flex-1 bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                  >
-                    £5
-                  </button>
-                  <button 
-                    onClick={() => makeDonation('£10')}
-                    className="flex-1 bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                  >
-                    £10
-                  </button>
+            <button 
+              onClick={leaveChat}
+              className="text-red-500 hover:text-red-700 text-sm font-medium"
+            >
+              Leave
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((msg, idx) => (
+              <div key={idx} className={
+                msg.type === 'system' ? 'text-center' :
+                msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'
+              }>
+                {msg.type === 'system' ? (
+                  <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-lg text-sm max-w-xs mx-auto">
+                    {msg.text}
+                  </div>
+                ) : (
+                  <div className={`max-w-xs px-4 py-2 rounded-2xl ${
+                    msg.type === 'user' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-white text-gray-800 shadow-sm'
+                  }`}>
+                    {msg.text}
+                  </div>
+                )}
+              </div>
+            ))}
+            
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded-2xl max-w-xs">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <button 
-              onClick={resetApp}
-              className="w-full bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors mt-4"
-            >
-              Done
-            </button>
+            )}
+            
+            <div ref={messagesEndRef} />
           </div>
-        </div>
-      )}
-    </div>
-  );
 
-  const renderScreen = () => {
-    switch(currentScreen) {
-      case 'home': return <HomeScreen />;
-      case 'training': return <TrainingScreen />;
-      case 'matching': return <MatchingScreen />;
-      case 'chat': return <ChatScreen />;
-      default: return <HomeScreen />;
-    }
-  };
+          {timeRemaining > 0 ? (
+            <div className="bg-white p-4 border-t">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={currentMessage}
+                  onChange={(e) => handleTyping(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  placeholder="Type your message..."
+                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-blue-500"
+                  disabled={connectionStatus !== 'connected'}
+                />
+                <button 
+                  onClick={sendMessage}
+                  disabled={!currentMessage.trim() || connectionStatus !== 'connected'}
+                  className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors disabled:bg-gray-300"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white p-4 border-t text-center">
+              <button 
+                onClick={leaveChat}
+                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Return Home
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-sm mx-auto bg-white min-h-screen shadow-xl">
-      {renderScreen()}
+      <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 p-6 flex flex-col">
+        <div className="text-center mb-8 mt-12">
+          <Logo />
+          <h1 className="text-3xl font-bold text-blue-400 mb-2">10 More Minutes</h1>
+          <p className="text-slate-300 text-lg">Get through the next 10 minutes together</p>
+          
+          <div className="mt-4 flex items-center justify-center space-x-2">
+            <div className={`w-2 h-2 rounded-full ${
+              connectionStatus === 'connected' ? 'bg-green-400' : 'bg-red-400'
+            }`}></div>
+            <span className="text-slate-400 text-sm">
+              {connectionStatus === 'connected' ? 'Online' : 'Connecting...'}
+            </span>
+            <span className="text-slate-500 text-sm">
+              ({onlineUsers} online)
+            </span>
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col justify-center space-y-6">
+          <button 
+            onClick={() => startMatching('seeker')}
+            disabled={connectionStatus !== 'connected'}
+            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <MessageCircle className="w-8 h-8 mx-auto mb-3" />
+            <h3 className="text-xl font-semibold mb-2">I need support</h3>
+            <p className="text-blue-100">Connect with someone who can listen</p>
+          </button>
+
+          <button 
+            onClick={() => startMatching('helper')}
+            disabled={connectionStatus !== 'connected'}
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 border border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Heart className="w-8 h-8 mx-auto mb-3" />
+            <h3 className="text-xl font-semibold mb-2">I can give support</h3>
+            <p className="text-teal-100">Help someone through their moment</p>
+          </button>
+        </div>
+
+        <div className="flex justify-around mt-8 text-sm text-slate-400">
+          <div className="flex items-center">
+            <Shield className="w-4 h-4 mr-1" />
+            <span>Anonymous</span>
+          </div>
+          
+          <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600" title="Emergency">
+            <AlertTriangle className="w-4 h-4" />
+          </button>
+          
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1" />
+            <span>10 minutes</span>
+          </div>
+          
+          <div className="flex items-center">
+            <Users className="w-4 h-4 mr-1" />
+            <span>Safe space</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default TenMoreMinutesApp;
+export default App;
