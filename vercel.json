@@ -1,1 +1,13 @@
-{}
+{
+  "rewrites": [
+    {
+      "source": "/((?!api).*)",
+      "destination": "/app/$1"
+    }
+  ],
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    }
+  }
+}
