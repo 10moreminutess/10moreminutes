@@ -1,480 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>10 More Minutes - Real Human Connection</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 More Minutes</title>
+  <style>
+    /* 🔹 Header + Nav Base */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 15px 40px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(-45deg, #2c1810, #1a237e, #4a148c, #2c1810);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
-            color: white;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .connection-dots {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .connection-line {
-            position: absolute;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: connect 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.5); }
-        }
-
-        @keyframes connect {
-            0%, 100% { opacity: 0; width: 0; }
-            50% { opacity: 1; width: 200px; }
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 20px 50px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-         .logo {
-              max-height: 80px;
-              width: auto;
-              display: block;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-links a:hover {
-            color: #ff6b9d;
-            transform: translateY(-2px);
-        }
-
-        .beta-chat-btn {
-            background: linear-gradient(135deg, #ff6b9d, #c471ed);
-            padding: 12px 28px;
-            border-radius: 30px;
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
-            border: 2px solid transparent;
-        }
-
-        .beta-chat-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 100px 50px 50px;
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 900px;
-            z-index: 20;
-        }
-
-        .hero-content h1 {
-            font-size: 4.5rem;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #fff, #ff6b9d, #12c2e9);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            line-height: 1.1;
-            animation: fadeInUp 1.2s ease forwards;
-        }
-
-        .hero-subtitle {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 400;
-            animation: fadeInUp 1.4s ease forwards;
-        }
-
-        .hero-description {
-            font-size: 1.3rem;
-            margin-bottom: 50px;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.7;
-            animation: fadeInUp 1.6s ease forwards;
-        }
-
-        .connection-options {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            animation: fadeInUp 1.8s ease forwards;
-        }
-
-        .option-btn {
-            padding: 20px 40px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .need-help-btn {
-            background: linear-gradient(135deg, #ff6b9d, #ff8a80);
-            color: white;
-        }
-
-        .need-help-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
-        }
-
-        .here-to-help-btn {
-            background: linear-gradient(135deg, #12c2e9, #4facfe);
-            color: white;
-        }
-
-        .here-to-help-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(18, 194, 233, 0.4);
-        }
-
-        .mission-section {
-            padding: 100px 50px;
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            text-align: center;
-        }
-
-        .mission-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .mission-content h2 {
-            font-size: 3rem;
-            margin-bottom: 30px;
-            color: #ff6b9d;
-            font-weight: 700;
-        }
-
-        .mission-text {
-            font-size: 1.4rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 40px;
-        }
-
-        .features-section {
-            padding: 100px 50px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 40px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 107, 157, 0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .feature-card:hover::before {
-            left: 100%;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 25px 50px rgba(255, 107, 157, 0.2);
-            border: 1px solid rgba(255, 107, 157, 0.3);
-        }
-
-        .feature-emoji {
-            font-size: 4rem;
-            margin-bottom: 25px;
-            display: block;
-        }
-
-        .feature-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #12c2e9;
-            font-weight: 600;
-        }
-
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
-        .cta-section {
-            padding: 80px 50px;
-            text-align: center;
-            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(18, 194, 233, 0.1));
-        }
-
-        .cta-content h2 {
-            font-size: 2.8rem;
-            margin-bottom: 25px;
-            color: white;
-            font-weight: 700;
-        }
-
-        .cta-content p {
-            font-size: 1.3rem;
-            margin-bottom: 40px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #ff6b9d, #12c2e9);
-            color: white;
-            padding: 18px 45px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 35px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
-        }
-
-        @media (max-width: 768px) {
-            /* Mobile header/nav adjustments */
-header nav {
-    flex-direction: column;       /* Stack logo and links */
-    align-items: center;          /* Center logo and links */
-    gap: 15px;                    /* Space between logo and links */
-}
-
-.nav-links {
-    flex-direction: column;       /* Stack links vertically */
-    gap: 15px;                    /* Space between links */
-    margin-top: 5px;
-    align-items: center;          /* Center links */
-}
-
-.nav-links a {
-    font-size: 1rem;              /* Slightly smaller for mobile */
-}
-
-.beta-chat-btn {
-    padding: 10px 25px;           /* Adjust size for smaller screens */
-    font-size: 1rem;
-}
-
-.logo {
-    max-height: 60px;             /* Smaller logo on mobile */
-    width: auto;
-}
-
-            .hero-content h1 {
-                font-size: 3rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.4rem;
-            }
-            
-            .hero-description {
-                font-size: 1.1rem;
-            }
-            
-            .hero, .mission-section, .features-section {
-                padding: 80px 25px;
-            }
-            
-            header {
-                padding: 15px 25px;
-            }
-            
-            .connection-options {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .option-btn {
-                width: 280px;
-                justify-content: center;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px);
-            animation: fadeInUp 1s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            /* Hamburger button */
-.hamburger {
-  display: none; 
-  background: none;
-  border: none;
-  font-size: 2.2rem;
-  color: white;
-  cursor: pointer;
-  z-index: 200;
-  position: absolute;
-  top: 20px;
-  right: 25px;
-}
-
-/* Close button inside menu */
-.close-menu {
-  background: none;
-  border: none;
-  font-size: 2.5rem;
-  color: white;
-  align-self: flex-end;
-  cursor: pointer;
-  margin-bottom: 30px;
-}
-
-/* Overlay */
-.nav-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 140;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Mobile nav adjustments */
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
+    .logo {
+      max-height: 70px;
+      width: auto;
+      display: block;
     }
 
     .nav-links {
-        display: flex;
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #ff6b9d;
+    }
+
+    /* 🔹 Hamburger hidden on desktop */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* 🔹 Mobile Styles */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+
+      .nav-links {
         flex-direction: column;
-        gap: 20px;
         position: fixed;
         top: 0;
-        right: -250px;        /* hidden by default */
+        right: -250px;
         height: 100%;
         width: 250px;
         background: rgba(0,0,0,0.95);
@@ -482,277 +74,91 @@ header nav {
         transition: right 0.3s ease;
         z-index: 150;
         opacity: 0;
-    }
+      }
 
-    .nav-links.active {
-        right: 0;             /* slide in */
+      .nav-links.active {
+        right: 0;
         opacity: 1;
-    }
+      }
 
-    .nav-links a {
-        font-size: 1.2rem;
+      .close-menu {
+        background: none;
+        border: none;
+        font-size: 2rem;
         color: white;
-    }
+        align-self: flex-end;
+        cursor: pointer;
+        margin-bottom: 30px;
+      }
 
-    .beta-chat-btn {
-        padding: 12px 20px;
-        text-align: center;
+      .nav-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        box-sizing: border-box;
-    }
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 140;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
 
-    .nav-overlay.active {
+      .nav-overlay.active {
         display: block;
         opacity: 1;
+      }
     }
-}
-
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <div class="connection-dots" id="connectionDots"></div>
-    
-    <div class="container">
-<header>
-  <nav>
-    <div>
-      <img src="logo.png" alt="10 More Minutes" class="logo">
-    </div>
+  <header>
+    <nav>
+      <!-- Logo -->
+      <div>
+        <img src="logo.png" alt="10 More Minutes" class="logo">
+      </div>
 
-    <!-- Hamburger button for mobile -->
-    <button class="hamburger" aria-label="Open navigation">
-      &#9776;
-    </button>
+      <!-- Hamburger Icon -->
+      <button class="hamburger">☰</button>
 
-    <!-- Mobile nav links -->
-    <div class="nav-links">
-      <button class="close-menu" aria-label="Close navigation">&times;</button>
-      <a href="#mission">Mission</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#safety">Safety</a>
-      <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
-    </div>
-  </nav>
+      <!-- Nav Links -->
+      <div class="nav-links">
+        <button class="close-menu">✕</button>
+        <a href="#mission">Mission</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#safety">Safety</a>
+        <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
+      </div>
+    </nav>
+  </header>
 
-  <!-- Overlay for dimming background -->
+  <!-- Overlay -->
   <div class="nav-overlay"></div>
-</header>
 
+  <script>
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const closeMenu = document.querySelector('.close-menu');
+    const overlay = document.querySelector('.nav-overlay');
 
-        <main>
-            <section class="hero">
-                <div class="hero-content">
-                    <h1>Real Human Connection</h1>
-                    <p class="hero-subtitle">When you need someone who understands</p>
-                    <p class="hero-description">
-                        A new kind of peer-to-peer support platform designed to tackle loneliness and create genuine human connection. Safe, anonymous, and immediate—because sometimes all you need is 10 more minutes with someone who cares.
-                    </p>
-                    
-                    <div class="connection-options">
-                        <a href="https://10moreminutes.co.uk/beta-chat?mode=need-help" class="option-btn need-help-btn">
-                            <span>💙</span>
-                            I need help
-                        </a>
-                        <a href="https://10moreminutes.co.uk/beta-chat?mode=here-to-help" class="option-btn here-to-help-btn">
-                            <span>🤝</span>
-                            I'm here to help
-                        </a>
-                    </div>
-                </div>
-            </section>
+    // Open menu
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.add('active');
+      overlay.classList.add('active');
+    });
 
-            <section class="mission-section" id="mission">
-                <div class="mission-content fade-in">
-                    <h2>Building a Movement of Kindness</h2>
-                    <p class="mission-text">
-                        Unlike traditional mental health platforms that focus on diagnosis or therapy, 10 More Minutes is about connection first. We believe that just a small amount of time and compassion can make the difference between despair and hope.
-                    </p>
-                    <p class="mission-text">
-                        <strong>Our goal is to build a movement where kindness and honesty can change lives.</strong>
-                    </p>
-                </div>
-            </section>
+    // Close menu (button)
+    closeMenu.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+      overlay.classList.remove('active');
+    });
 
-            <section class="features-section" id="how-it-works">
-                <div class="features-grid">
-                    <div class="feature-card fade-in">
-                        <span class="feature-emoji">⚡</span>
-                        <h3>Instant Connection</h3>
-                        <p>Get matched in real-time with someone ready to listen. No waiting lists, no appointments—just immediate human support when you need it most.</p>
-                    </div>
-                    
-                    <div class="feature-card fade-in">
-                        <span class="feature-emoji">🎭</span>
-                        <h3>Safe & Anonymous</h3>
-                        <p>Share freely without fear of judgment. Stay completely anonymous or create a lightweight profile—you're always in control of what you share.</p>
-                    </div>
-                    
-                    <div class="feature-card fade-in">
-                        <span class="feature-emoji">🌱</span>
-                        <h3>Connection First</h3>
-                        <p>No diagnosis, no clinical approach—just real conversations with people who understand what you're going through. Professional help is available as an optional third-party service.</p>
-                    </div>
-                    
-                    <div class="feature-card fade-in">
-                        <span class="feature-emoji">🔗</span>
-                        <h3>Ongoing Support</h3>
-                        <p>Found someone you connect with? Stay in touch and build meaningful relationships that extend beyond a single conversation.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="cta-section">
-                <div class="cta-content">
-                    <h2>Ready to Connect?</h2>
-                    <p>Join our beta and be part of building something that truly matters—a platform where every conversation can change a life.</p>
-                    <a href="https://10moreminutes.co.uk/beta-chat" class="cta-button">Start Connecting Now</a>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script>
-        // Create connection visualization
-        function createConnectionDots() {
-            const container = document.getElementById('connectionDots');
-            const dotCount = 20;
-            
-            for (let i = 0; i < dotCount; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                dot.style.left = Math.random() * 100 + '%';
-                dot.style.top = Math.random() * 100 + '%';
-                dot.style.animationDelay = Math.random() * 3 + 's';
-                container.appendChild(dot);
-                
-                // Occasionally create connection lines
-                if (Math.random() > 0.7) {
-                    const line = document.createElement('div');
-                    line.className = 'connection-line';
-                    line.style.left = Math.random() * 80 + '%';
-                    line.style.top = Math.random() * 80 + '%';
-                    line.style.transform = `rotate(${Math.random() * 360}deg)`;
-                    line.style.animationDelay = Math.random() * 4 + 's';
-                    container.appendChild(line);
-                }
-            }
-        }
-
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationDelay = (index * 0.2) + 's';
-                    entry.target.classList.add('fade-in');
-                }
-            });
-        }, observerOptions);
-
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(0, 0, 0, 0.7)';
-            } else {
-                header.style.background = 'rgba(0, 0, 0, 0.3)';
-            }
-        });
-
-        // Add connection sparkle effect on hover over main CTAs
-        document.querySelectorAll('.option-btn, .cta-button').forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                const sparkles = 3;
-                for (let i = 0; i < sparkles; i++) {
-                    setTimeout(() => {
-                        const sparkle = document.createElement('div');
-                        sparkle.style.position = 'absolute';
-                        sparkle.style.left = (this.offsetLeft + Math.random() * this.offsetWidth) + 'px';
-                        sparkle.style.top = (this.offsetTop + Math.random() * this.offsetHeight) + 'px';
-                        sparkle.style.width = '8px';
-                        sparkle.style.height = '8px';
-                        sparkle.style.background = '#ff6b9d';
-                        sparkle.style.borderRadius = '50%';
-                        sparkle.style.pointerEvents = 'none';
-                        sparkle.style.zIndex = '1000';
-                        sparkle.style.animation = 'sparkleFloat 1.5s ease-out forwards';
-                        
-                        if (!document.getElementById('sparkle-styles')) {
-                            const style = document.createElement('style');
-                            style.id = 'sparkle-styles';
-                            style.textContent = `
-                                @keyframes sparkleFloat {
-                                    0% {
-                                        transform: translateY(0) scale(0);
-                                        opacity: 1;
-                                    }
-                                    100% {
-                                        transform: translateY(-50px) scale(1.5);
-                                        opacity: 0;
-                                    }
-                                }
-                            `;
-                            document.head.appendChild(style);
-                        }
-                        
-                        document.body.appendChild(sparkle);
-                        
-                        setTimeout(() => sparkle.remove(), 1500);
-                    }, i * 200);
-                }
-            });
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            createConnectionDots();
-            
-            // Observe elements for fade-in animation
-            document.querySelectorAll('.fade-in').forEach(el => {
-                observer.observe(el);
-            });
-        });
-        const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
-const closeMenu = document.querySelector('.close-menu');
-const overlay = document.querySelector('.nav-overlay');
-
-// Open menu
-hamburger.addEventListener('click', () => {
-  navLinks.classList.add('active');
-  overlay.classList.add('active');
-});
-
-// Close menu with close button
-closeMenu.addEventListener('click', () => {
-  navLinks.classList.remove('active');
-  overlay.classList.remove('active');
-});
-
-// Close menu when clicking outside (overlay)
-overlay.addEventListener('click', () => {
-  navLinks.classList.remove('active');
-  overlay.classList.remove('active');
-});
-    </script>
+    // Close menu (overlay click)
+    overlay.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+  </script>
 </body>
 </html>
