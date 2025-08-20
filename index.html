@@ -348,6 +348,34 @@
         }
 
         @media (max-width: 768px) {
+            /* Mobile header/nav adjustments */
+header nav {
+    flex-direction: column;       /* Stack logo and links */
+    align-items: center;          /* Center logo and links */
+    gap: 15px;                    /* Space between logo and links */
+}
+
+.nav-links {
+    flex-direction: column;       /* Stack links vertically */
+    gap: 15px;                    /* Space between links */
+    margin-top: 5px;
+    align-items: center;          /* Center links */
+}
+
+.nav-links a {
+    font-size: 1rem;              /* Slightly smaller for mobile */
+}
+
+.beta-chat-btn {
+    padding: 10px 25px;           /* Adjust size for smaller screens */
+    font-size: 1rem;
+}
+
+.logo {
+    max-height: 60px;             /* Smaller logo on mobile */
+    width: auto;
+}
+
             .hero-content h1 {
                 font-size: 3rem;
             }
