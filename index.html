@@ -1,11 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>10 More Minutes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    /* 🔹 Header + Nav Base */
+    /* 🔹 Reset + Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: white;
+      padding-top: 80px;
+    }
+
+    a {
+      text-decoration: none;
+      color: white;
+    }
+
+    /* 🔹 Header for Desktop */
     header {
       position: fixed;
       top: 0;
@@ -15,150 +35,103 @@
       backdrop-filter: blur(15px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       z-index: 100;
-      transition: all 0.3s ease;
-    }
-
-    nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .logo {
-      max-height: 70px;
-      width: auto;
-      display: block;
+      max-height: 60px;
     }
 
     .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 30px;
     }
 
     .nav-links a {
-      color: white;
-      text-decoration: none;
       font-weight: 600;
-      transition: color 0.2s;
+      transition: color 0.2s ease;
     }
 
     .nav-links a:hover {
       color: #ff6b9d;
     }
 
-    /* 🔹 Hamburger hidden on desktop */
-    .hamburger {
+    /* 🔹 Bottom Nav for Mobile */
+    .bottom-nav {
       display: none;
-      background: none;
-      border: none;
-      font-size: 2rem;
-      color: white;
-      cursor: pointer;
     }
 
-    /* 🔹 Mobile Styles */
     @media (max-width: 768px) {
-      .hamburger {
-        display: block;
-      }
-
-      .nav-links {
-        flex-direction: column;
-        position: fixed;
-        top: 0;
-        right: -250px;
-        height: 100%;
-        width: 250px;
-        background: rgba(0,0,0,0.95);
-        padding: 80px 20px 20px 20px;
-        transition: right 0.3s ease;
-        z-index: 150;
-        opacity: 0;
-      }
-
-      .nav-links.active {
-        right: 0;
-        opacity: 1;
-      }
-
-      .close-menu {
-        background: none;
-        border: none;
-        font-size: 2rem;
-        color: white;
-        align-self: flex-end;
-        cursor: pointer;
-        margin-bottom: 30px;
-      }
-
-      .nav-overlay {
+      header {
         display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 140;
-        opacity: 0;
-        transition: opacity 0.3s ease;
       }
 
-      .nav-overlay.active {
-        display: block;
-        opacity: 1;
+      .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 100;
+      }
+
+      .bottom-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.75rem;
+        color: white;
+        transition: color 0.2s ease;
+      }
+
+      .bottom-nav a:hover {
+        color: #ff6b9d;
+      }
+
+      .bottom-nav i {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+      }
+
+      body {
+        padding-bottom: 60px;
+        padding-top: 20px;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- 🔹 Desktop Header -->
   <header>
-    <nav>
-      <!-- Logo -->
-      <div>
-        <img src="logo.png" alt="10 More Minutes" class="logo">
-      </div>
-
-      <!-- Hamburger Icon -->
-      <button class="hamburger">☰</button>
-
-      <!-- Nav Links -->
-      <div class="nav-links">
-        <button class="close-menu">✕</button>
-        <a href="#mission">Mission</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#safety">Safety</a>
-        <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
-      </div>
-    </nav>
+    <img src="logo.png" alt="10 More Minutes" class="logo" />
+    <div class="nav-links">
+      <a href="#mission">Mission</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#safety">Safety</a>
+      <a href="https://10moreminutes.co.uk/beta-chat">🌟 Try Beta</a>
+    </div>
   </header>
 
-  <!-- Overlay -->
-  <div class="nav-overlay"></div>
+  <!-- 🔹 Mobile Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="#mission"><i class="fas fa-bullseye"></i>Mission</a>
+    <a href="#how-it-works"><i class="fas fa-cogs"></i>How It Works</a>
+    <a href="#safety"><i class="fas fa-shield-alt"></i>Safety</a>
+    <a href="https://10moreminutes.co.uk/beta-chat"><i class="fas fa-star"></i>Beta</a>
+  </nav>
 
-  <script>
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    const closeMenu = document.querySelector('.close-menu');
-    const overlay = document.querySelector('.nav-overlay');
+  <!-- 🔹 Page Content -->
+  <main style="padding: 40px;">
+    <h1>Welcome to 10 More Minutes</h1>
+    <p>This is where your content goes. The nav adapts beautifully across devices.</p>
+  </main>
 
-    // Open menu
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.add('active');
-      overlay.classList.add('active');
-    });
-
-    // Close menu (button)
-    closeMenu.addEventListener('click', () => {
-      navLinks.classList.remove('active');
-      overlay.classList.remove('active');
-    });
-
-    // Close menu (overlay click)
-    overlay.addEventListener('click', () => {
-      navLinks.classList.remove('active');
-      overlay.classList.remove('active');
-    });
-  </script>
 </body>
 </html>
