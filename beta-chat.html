@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 More Minutes - Beta Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #2c1810, #1a237e, #4a148c, #2c1810);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b9d, #c471ed, #12c2e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #ff6b9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-content p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .mode-selection {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 20px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .need-help-mode {
+            background: linear-gradient(135deg, #ff6b9d, #ff8a80);
+            color: white;
+        }
+
+        .help-others-mode {
+            background: linear-gradient(135deg, #12c2e9, #4facfe);
+            color: white;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            display: none;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .message.own {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message.other {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.own .message-bubble {
+            background: linear-gradient(135deg, #ff6b9d, #c471ed);
+            color: white;
+        }
+
+        .message.other .message-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .system-message {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            align-self: center;
+            max-width: 80%;
+        }
+
+        .input-area {
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .message-input:focus {
+            border-color: #ff6b9d;
+            box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.2);
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ff6b9d, #c471ed);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .safety-notice {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .header-left {
+                gap: 15px;
+            }
+
+            .mode-selection {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .mode-btn {
+                width: 250px;
+                justify-content: center;
+            }
+
+            .welcome-content h2 {
+                font-size: 2rem;
+            }
+
+            .messages-container, .input-area {
+                padding: 15px 20px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="logo">10 More Minutes</div>
+                <div class="connection-status" id="connectionStatus">
+                    <div class="status-dot"></div>
+                    <span id="statusText">Beta Mode</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="showSafetyInfo()">🛡️ Safety</button>
+                <button class="btn" onclick="endChat()" id="endChatBtn" style="display: none;">End Chat</button>
+                <a href="https://10moreminutes.co.uk" class="btn">← Home</a>
+            </div>
+        </div>
+
+        <div class="safety-notice">
+            <strong>🛡️ Beta Safety Notice:</strong> This is a demo version for testing purposes. For real support needs, please contact professional services or emergency helplines in your area.
+        </div>
+
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-content">
+                <h2>Welcome to 10 More Minutes</h2>
+                <p>Choose how you'd like to connect today. Remember, this is a safe space for real conversations without judgment.</p>
+                
+                <div class="mode-selection">
+                    <button class="mode-btn need-help-mode" onclick="selectMode('needHelp')">
+                        <span>💙</span>
+                        I need someone to talk to
+                    </button>
+                    <button class="mode-btn help-others-mode" onclick="selectMode('helpOthers')">
+                        <span>🤝</span>
+                        I'm here to listen
+                    </button>
+                </div>
+                
+                <p style="font-size: 1rem; color: rgba(255,255,255,0.6);">
+                    In the full version, you'll be matched with someone in real-time based on your choice.
+                </p>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be added here -->
+            </div>
+            
+            <div class="input-area">
+                <input type="text" 
+                       class="message-input" 
+                       id="messageInput" 
+                       placeholder="Type your message here..."
+                       onkeypress="handleKeyPress(event)">
+                <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chatMode = null;
+        let isTyping = false;
+        let messageCount = 0;
+
+        // Get mode from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get('mode');
+        
+        if (urlMode === 'need-help') {
+            setTimeout(() => selectMode('needHelp'), 500);
+        } else if (urlMode === 'here-to-help') {
+            setTimeout(() => selectMode('helpOthers'), 500);
+        }
+
+        function selectMode(mode) {
+            chatMode = mode;
+            
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('chatArea').style.display = 'flex';
+            document.getElementById('endChatBtn').style.display = 'inline-block';
+            
+            // Simulate connection process
+            updateConnectionStatus('Connecting...', '#ff9800');
+            
+            setTimeout(() => {
+                updateConnectionStatus('Connected', '#4CAF50');
+                startChat(mode);
+            }, 2000);
+        }
+
+        function updateConnectionStatus(text, color) {
+            document.getElementById('statusText').textContent = text;
+            document.querySelector('.status-dot').style.background = color;
+        }
+
+        function startChat(mode) {
+            const container = document.getElementById('messagesContainer');
+            
+            if (mode === 'needHelp') {
+                addSystemMessage("You've been connected with someone who wants to help. Feel free to share what's on your mind.");
+                
+                setTimeout(() => {
+                    addMessage("Hi there! I saw you wanted to talk to someone. I'm here and ready to listen. How are you feeling right now?", 'other');
+                }, 1500);
+            } else {
+                addSystemMessage("You've been connected with someone who needs support. Thank you for being here for them.");
+                
+                setTimeout(() => {
+                    addMessage("Hey... I'm not doing so great today. Thanks for being willing to listen. It means more than you know.", 'other');
+                }, 1500);
+            }
+        }
+
+        function addSystemMessage(text) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'system-message';
+            messageDiv.textContent = text;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const time = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">${text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+            messageCount++;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'own');
+                input.value = '';
+                
+                // Simulate typing response
+                showTypingIndicator();
+                
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    generateResponse(message);
+                }, Math.random() * 2000 + 1000);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function showTypingIndicator() {
+            if (isTyping) return;
+            
+            isTyping = true;
+            const container = document.getElementById('messagesContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                Someone is typing
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) {
+                typing.remove();
+            }
+            isTyping = false;
+        }
+
+        function generateResponse(userMessage) {
+            const responses = {
+                needHelp: [
+                    "That sounds really tough. Can you tell me more about what's been weighing on you?",
+                    "I hear you. Sometimes it helps just to know someone is listening. What's been the hardest part?",
+                    "Thank you for sharing that with me. You're being really brave by talking about this.",
+                    "I'm here with you. Take your time - there's no pressure to say anything you're not comfortable with.",
+                    "That must feel overwhelming. Have you been carrying this alone for a while?",
+                    "You matter, and what you're going through matters too. I'm glad you reached out.",
+                    "Sometimes the smallest step forward can feel huge. You've already taken one by being here."
+                ],
+                helpOthers: [
+                    "Thank you so much for listening. It really helps to know someone cares.",
+                    "I appreciate you being here. It's been hard to find people who understand.",
+                    "You asking that question made me realize something I hadn't thought of before.",
+                    "Talking to you is helping more than you probably know. Thank you for your kindness.",
+                    "I feel a bit lighter already. There's something powerful about being heard.",
+                    "Your support means the world right now. I was feeling so alone earlier.",
+                    "I'm starting to see this differently. Thank you for helping me think through this."
+                ]
+            };
+            
+            const modeResponses = responses[chatMode] || responses.needHelp;
+            const randomResponse = modeResponses[Math.floor(Math.random() * modeResponses.length)];
+            
+            addMessage(randomResponse, 'other');
+        }
+
+        function endChat() {
+            if (confirm('Are you sure you want to end this chat?')) {
+                addSystemMessage("Chat ended. Thank you for using 10 More Minutes. Remember, you're not alone.");
+                
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendBtn').disabled = true;
+                updateConnectionStatus('Disconnected', '#f44336');
+                
+                setTimeout(() => {
+                    if (confirm('Would you like to start a new conversation?')) {
+                        location.reload();
+                    }
+                }, 3000);
+            }
+        }
+
+        function showSafetyInfo() {
+            alert(`🛡️ Safety & Support Information
+
+This is a beta demo version. For real support:
+
+🚨 Emergency: Call emergency services
+🇬🇧 Samaritans: 116 123 (free, 24/7)
+🇺🇸 Crisis Text Line: Text HOME to 741741
+
+Remember:
+• You can end the chat at any time
+• This platform is for peer support, not professional therapy
+• If you're in immediate danger, contact emergency services
+• Professional counseling services are available separately
+
+Your safety and wellbeing are the top priority.`);
+        }
+
+        // Add some demo interactivity
+        document.getElementById('messageInput').addEventListener('input', function() {
+            const btn = document.getElementById('sendBtn');
+            if (this.value.trim()) {
+                btn.style.opacity = '1';
+                btn.style.transform = 'scale(1.05)';
+            } else {
+                btn.style.opacity = '0.7';
+                btn.style.transform = 'scale(1)';
+            }
+        });
+    </script>
+</body>
+</html>
