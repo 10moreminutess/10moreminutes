@@ -423,6 +423,90 @@ header nav {
                 opacity: 1;
                 transform: translateY(0);
             }
+            /* Hamburger button */
+.hamburger {
+  display: none; 
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  color: white;
+  cursor: pointer;
+  z-index: 200;
+  position: absolute;
+  top: 20px;
+  right: 25px;
+}
+
+/* Close button inside menu */
+.close-menu {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: white;
+  align-self: flex-end;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+/* Overlay */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 140;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Mobile nav adjustments */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: fixed;
+        top: 0;
+        right: -250px;        /* hidden by default */
+        height: 100%;
+        width: 250px;
+        background: rgba(0,0,0,0.95);
+        padding: 80px 20px 20px 20px;
+        transition: right 0.3s ease;
+        z-index: 150;
+        opacity: 0;
+    }
+
+    .nav-links.active {
+        right: 0;             /* slide in */
+        opacity: 1;
+    }
+
+    .nav-links a {
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .beta-chat-btn {
+        padding: 12px 20px;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .nav-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+}
+
         }
     </style>
 </head>
@@ -430,19 +514,31 @@ header nav {
     <div class="connection-dots" id="connectionDots"></div>
     
     <div class="container">
-      <header>
-    <nav>
-        <div>
-            <img src="logo.png" alt="10 More Minutes" class="logo">
-        </div>
-        <div class="nav-links">
-            <a href="#mission">Mission</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#safety">Safety</a>
-            <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
-        </div>
-    </nav>
+<header>
+  <nav>
+    <div>
+      <img src="logo.png" alt="10 More Minutes" class="logo">
+    </div>
+
+    <!-- Hamburger button for mobile -->
+    <button class="hamburger" aria-label="Open navigation">
+      &#9776;
+    </button>
+
+    <!-- Mobile nav links -->
+    <div class="nav-links">
+      <button class="close-menu" aria-label="Close navigation">&times;</button>
+      <a href="#mission">Mission</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#safety">Safety</a>
+      <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
+    </div>
+  </nav>
+
+  <!-- Overlay for dimming background -->
+  <div class="nav-overlay"></div>
 </header>
+
 
         <main>
             <section class="hero">
@@ -635,6 +731,28 @@ header nav {
                 observer.observe(el);
             });
         });
+        const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+const closeMenu = document.querySelector('.close-menu');
+const overlay = document.querySelector('.nav-overlay');
+
+// Open menu
+hamburger.addEventListener('click', () => {
+  navLinks.classList.add('active');
+  overlay.classList.add('active');
+});
+
+// Close menu with close button
+closeMenu.addEventListener('click', () => {
+  navLinks.classList.remove('active');
+  overlay.classList.remove('active');
+});
+
+// Close menu when clicking outside (overlay)
+overlay.addEventListener('click', () => {
+  navLinks.classList.remove('active');
+  overlay.classList.remove('active');
+});
     </script>
 </body>
 </html>
