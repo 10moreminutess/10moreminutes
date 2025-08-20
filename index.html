@@ -365,7 +365,36 @@
             }
             
             header {
-                padding: 15px 25px;
+                padding: 10px 15px;
+            }
+            
+            nav {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .logo {
+                max-height: 50px;
+                order: 1;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                font-size: 14px;
+                order: 2;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .nav-links a:not(.beta-chat-btn) {
+                display: none;
+            }
+            
+            .beta-chat-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                margin: 0 auto;
             }
             
             .connection-options {
@@ -381,6 +410,37 @@
             .features-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 8px 12px;
+            }
+            
+            .logo {
+                max-height: 40px;
+            }
+            
+            nav {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                margin-top: 8px;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .option-btn {
+                width: 100%;
+                max-width: 250px;
+                padding: 16px 24px;
+                font-size: 1.1rem;
             }
         }
 
