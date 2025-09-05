@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>10 More Minutes - Real Human Connection</title>
+    <title>10 More Minutes Community Interest Company - Peer Support When You Need It Most</title>
+    <meta name="description" content="A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations. Reducing isolation and building genuine connections for all ages.">
     <style>
         * {
             margin: 0;
@@ -86,15 +87,10 @@
             align-items: center;
         }
 
-         .logo {
-              max-height: 70px;
-              width: auto;
-              display: block;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .logo {
+            max-height: 70px;
+            width: auto;
+            display: block;
         }
 
         .nav-links {
@@ -133,7 +129,6 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Mobile menu toggle */
         .mobile-menu-toggle {
             display: none;
             flex-direction: column;
@@ -174,12 +169,26 @@
         }
 
         .hero-content {
-            max-width: 900px;
+            max-width: 1000px;
             z-index: 20;
         }
 
+        .cic-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
         .hero-content h1 {
-            font-size: 4.5rem;
+            font-size: 4.2rem;
             margin-bottom: 25px;
             background: linear-gradient(135deg, #fff, #ff6b9d, #12c2e9);
             -webkit-background-clip: text;
@@ -258,7 +267,7 @@
         }
 
         .mission-content {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -273,10 +282,28 @@
             font-size: 1.4rem;
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 40px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .community-focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #12c2e9;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
         }
 
         .features-section {
             padding: 100px 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 60px;
+            color: #12c2e9;
+            font-weight: 700;
         }
 
         .features-grid {
@@ -339,6 +366,33 @@
             line-height: 1.6;
         }
 
+        .safety-section {
+            padding: 100px 50px;
+            background: rgba(18, 194, 233, 0.05);
+            text-align: center;
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .safety-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .safety-item h4 {
+            color: #ff6b9d;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
         .cta-section {
             padding: 80px 50px;
             text-align: center;
@@ -375,6 +429,42 @@
         .cta-button:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
+        }
+
+        footer {
+            padding: 60px 50px 40px;
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .cic-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .cic-info h4 {
+            color: #12c2e9;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .cic-info p {
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
         /* Mobile Styles */
@@ -418,11 +508,6 @@
                 transition: all 0.3s ease;
             }
 
-            .nav-links a:hover {
-                background: rgba(255, 107, 157, 0.2);
-                transform: scale(1.05);
-            }
-
             .beta-chat-btn {
                 padding: 15px 35px;
                 font-size: 1.3rem;
@@ -462,11 +547,11 @@
                 font-size: 1.2rem;
             }
 
-            .mission-section, .features-section {
+            .mission-section, .features-section, .safety-section {
                 padding: 80px 25px;
             }
 
-            .mission-content h2 {
+            .mission-content h2, .section-title {
                 font-size: 2.2rem;
             }
 
@@ -474,7 +559,7 @@
                 font-size: 1.2rem;
             }
             
-            .features-grid {
+            .features-grid, .safety-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
@@ -487,53 +572,8 @@
                 padding: 60px 25px;
             }
 
-            .cta-content h2 {
-                font-size: 2.2rem;
-            }
-
-            .cta-content p {
-                font-size: 1.1rem;
-            }
-        }
-        
-        /* Small Mobile Styles */
-        @media (max-width: 480px) {
-            header {
-                padding: 10px 15px;
-            }
-            
-            .logo {
-                max-height: 40px;
-            }
-
-            .hero-content h1 {
-                font-size: 2.2rem;
-            }
-            
-            .option-btn {
-                max-width: 250px;
-                padding: 16px 24px;
-                font-size: 1.1rem;
-            }
-
-            .mission-content h2 {
-                font-size: 1.8rem;
-            }
-
-            .mission-text {
-                font-size: 1.1rem;
-            }
-
-            .feature-card {
-                padding: 25px;
-            }
-
-            .feature-card h3 {
-                font-size: 1.5rem;
-            }
-
-            .cta-content h2 {
-                font-size: 1.8rem;
+            footer {
+                padding: 40px 25px 30px;
             }
         }
 
@@ -558,7 +598,7 @@
         <header>
             <nav>
                 <div>
-                    <img src="logo.png" alt="10 More Minutes" class="logo">
+                    <img src="logo.png" alt="10 More Minutes Community Interest Company" class="logo">
                 </div>
                 
                 <div class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -568,10 +608,11 @@
                 </div>
 
                 <div class="nav-links" id="navLinks">
-                    <a href="#mission">Mission</a>
+                    <a href="#mission">Our Mission</a>
                     <a href="#how-it-works">How It Works</a>
-                    <a href="#safety">Safety</a>
-                    <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Try Beta</a>
+                    <a href="#safety">Safety & Trust</a>
+                    <a href="#about">About CIC</a>
+                    <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Join Beta</a>
                 </div>
             </nav>
         </header>
@@ -579,20 +620,21 @@
         <main>
             <section class="hero">
                 <div class="hero-content">
-                    <h1>Real Human Connection</h1>
-                    <p class="hero-subtitle">When you need someone who understands</p>
+                    <div class="cic-badge">Community Interest Company</div>
+                    <h1>10 More Minutes of Connection</h1>
+                    <p class="hero-subtitle">Peer-to-peer mental health support when you need it most</p>
                     <p class="hero-description">
-                        A new kind of peer-to-peer support platform designed to tackle loneliness and create genuine human connection. Safe, anonymous, and immediate—because sometimes all you need is 10 more minutes with someone who cares.
+                        A Community Interest Company dedicated to reducing loneliness and emotional distress through immediate, authentic peer-to-peer conversations. Quick support in manageable 10-minute sessions for people of all ages experiencing poor mental health.
                     </p>
                     
                     <div class="connection-options">
                         <a href="https://10moreminutes.co.uk/beta-chat?mode=need-help" class="option-btn need-help-btn">
                             <span>💙</span>
-                            I need help
+                            I need support
                         </a>
                         <a href="https://10moreminutes.co.uk/beta-chat?mode=here-to-help" class="option-btn here-to-help-btn">
                             <span>🤝</span>
-                            I'm here to help
+                            I can help others
                         </a>
                     </div>
                 </div>
@@ -600,40 +642,80 @@
 
             <section class="mission-section" id="mission">
                 <div class="mission-content fade-in">
-                    <h2>Building a Movement of Kindness</h2>
-                    <p class="mission-text">
-                        Unlike traditional mental health platforms that focus on diagnosis or therapy, 10 More Minutes is about connection first. We believe that just a small amount of time and compassion can make the difference between despair and hope.
-                    </p>
-                    <p class="mission-text">
-                        <strong>Our goal is to build a movement where kindness and honesty can change lives.</strong>
-                    </p>
+                    <h2>Our Community Purpose</h2>
+                    <div class="mission-text">
+                        <p>As a Community Interest Company, 10 More Minutes exists to benefit people of all ages experiencing poor mental health, loneliness, or emotional distress. We go beyond providing a mental health app—we're building a community platform where people can come together to support one another, reduce isolation, and foster genuine human connection.</p>
+                    </div>
+                    
+                    <div class="community-focus">
+                        <h3 style="color: #12c2e9; margin-bottom: 20px;">Building Sustainable Peer Networks</h3>
+                        <p class="mission-text">Our service offers quick, almost instant support in short and manageable conversations: ten minutes at a time, giving people a safe space to be heard when they need it most. Over time, we create sustainable peer-to-peer support networks that empower individuals to both give and receive help, linking people with similar experiences to build genuine, empathetic, and deeply impactful understanding.</p>
+                    </div>
                 </div>
             </section>
 
             <section class="features-section" id="how-it-works">
+                <h2 class="section-title">How We Create Community Benefit</h2>
                 <div class="features-grid">
                     <div class="feature-card fade-in">
                         <span class="feature-emoji">⚡</span>
-                        <h3>Instant Connection</h3>
-                        <p>Get matched in real-time with someone ready to listen. No waiting lists, no appointments—just immediate human support when you need it most.</p>
+                        <h3>Immediate Access</h3>
+                        <p>The community benefits by having immediate access to short, manageable emotional support sessions, reducing feelings of isolation at the moment they need it most.</p>
                     </div>
                     
                     <div class="feature-card fade-in">
-                        <span class="feature-emoji">🎭</span>
-                        <h3>Safe & Anonymous</h3>
-                        <p>Share freely without fear of judgment. Stay completely anonymous or create a lightweight profile—you're always in control of what you share.</p>
+                        <span class="feature-emoji">🤝</span>
+                        <h3>Authentic Connections</h3>
+                        <p>We match people with similar experiences to create authentic connections rooted in shared understanding, reducing stigma and increasing feelings of belonging.</p>
                     </div>
                     
                     <div class="feature-card fade-in">
-                        <span class="feature-emoji">🌱</span>
-                        <h3>Connection First</h3>
-                        <p>No diagnosis, no clinical approach—just real conversations with people who understand what you're going through. Professional help is available as an optional third-party service.</p>
+                        <span class="feature-emoji">🏥</span>
+                        <h3>Professional Pathways</h3>
+                        <p>The community benefits by ensuring individuals are guided to the right level of professional care when peer support alone is not enough, improving safety and wellbeing outcomes.</p>
                     </div>
                     
                     <div class="feature-card fade-in">
-                        <span class="feature-emoji">🔗</span>
-                        <h3>Ongoing Support</h3>
-                        <p>Found someone you connect with? Stay in touch and build meaningful relationships that extend beyond a single conversation.</p>
+                        <span class="feature-emoji">🏢</span>
+                        <h3>Workplace Integration</h3>
+                        <p>We help organizations and community groups embed 10 More Minutes into their wellbeing practices as first-line mental health support, normalizing conversations and reducing stigma.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">🔄</span>
+                        <h3>Mutual Support</h3>
+                        <p>Users can both give and receive support, fostering empathy, mutual understanding, and resilience while feeling valued whether seeking or providing help.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">📈</span>
+                        <h3>Continuous Improvement</h3>
+                        <p>The community benefits by having a platform that evolves to meet their needs through user feedback, ensuring it remains relevant, effective, and user-led.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="safety-section" id="safety">
+                <h2 class="section-title">Safety & Trust</h2>
+                <div class="safety-grid">
+                    <div class="safety-item fade-in">
+                        <h4>🔒 Safe & Anonymous</h4>
+                        <p>Complete anonymity with optional lightweight profiles. You control what you share and when.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>🎯 Trained Support</h4>
+                        <p>Volunteer training and ongoing support ensures quality peer-to-peer connections.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>🚨 Crisis Support</h4>
+                        <p>Clear pathways to professional mental health services and crisis support when needed.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>📋 Community Guidelines</h4>
+                        <p>Clear community standards ensure a safe, supportive environment for all users.</p>
                     </div>
                 </div>
             </section>
@@ -641,11 +723,24 @@
             <section class="cta-section">
                 <div class="cta-content">
                     <h2>Ready to Connect?</h2>
-                    <p>Join our beta and be part of building something that truly matters—a platform where every conversation can change a life.</p>
+                    <p>Join our beta and be part of building a community platform that creates genuine impact—where every conversation can make a difference.</p>
                     <a href="https://10moreminutes.co.uk/beta-chat" class="cta-button">Start Connecting Now</a>
                 </div>
             </section>
         </main>
+
+        <footer id="about">
+            <div class="footer-content">
+                <div class="cic-info">
+                    <h4>About 10 More Minutes Community Interest Company</h4>
+                    <p>10 More Minutes is a Community Interest Company (CIC) registered in England. As a CIC, we are legally required to use our profits and assets for community benefit. Any surplus we generate is reinvested directly into developing and delivering our service to further our community purpose.</p>
+                    <p>This includes maintaining and improving our platform, expanding access, providing training for volunteers, conducting outreach to workplaces and communities, and ensuring long-term sustainability of peer-to-peer mental health support.</p>
+                </div>
+                
+                <p>&copy; 2024 10 More Minutes Community Interest Company. All rights reserved.</p>
+                <p>Dedicated to reducing loneliness and supporting mental wellbeing in our communities.</p>
+            </div>
+        </footer>
     </div>
 
     <script>
@@ -657,6 +752,49 @@
             mobileMenuToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
         });
+
+        // Share website function
+        function shareWebsite() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '10 More Minutes - Peer Support When You Need It Most',
+                    text: 'A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations.',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback to copying URL to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Website URL copied to clipboard! Share it with someone who might benefit from peer support.');
+                }).catch(() => {
+                    // Final fallback - show URL in alert
+                    alert('Share this URL: ' + window.location.href);
+                });
+            }
+        }
+
+        // Donation functions
+        function donate(amount) {
+            // In a real implementation, this would integrate with Stripe or similar
+            alert(`Thank you for your interest in donating £${amount}! This would integrate with a secure payment processor like Stripe. Your donation directly supports peer mental health support in our communities.`);
+        }
+
+        function donateMonthly(amount) {
+            alert(`Thank you for considering £${amount}/month recurring support! This would set up a monthly subscription through a secure payment processor. Monthly donations provide the most sustainable impact for our community mission.`);
+        }
+
+        function customDonation() {
+            const amount = prompt("Enter your desired donation amount (£):");
+            if (amount && !isNaN(amount) && amount > 0) {
+                donate(amount);
+            }
+        }
+
+        function customMonthly() {
+            const amount = prompt("Enter your desired monthly support amount (£):");
+            if (amount && !isNaN(amount) && amount > 0) {
+                donateMonthly(amount);
+            }
+        }
 
         // Close mobile menu when clicking on a link
         navLinks.addEventListener('click', (e) => {
