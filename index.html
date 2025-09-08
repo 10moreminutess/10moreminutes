@@ -1,213 +1,974 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>10 More Minutes</title>
-  <style>
-    /* Reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; color: #fff; background: #0f172a; overflow-x: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 More Minutes Community Interest Company - Peer Support When You Need It Most</title>
+    <meta name="description" content="A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations. Reducing isolation and building genuine connections for all ages.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Header */
-    header { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-             display: flex; justify-content: space-between; align-items: center;
-             padding: 20px 50px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
-    header h1 { font-size: 24px; }
-    nav { display: flex; gap: 20px; }
-    nav a { text-decoration: none; color: #fff; font-weight: bold; transition: color .3s; }
-    nav a:hover { color: #38bdf8; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #2c1810, #1a237e, #4a148c, #2c1810);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-    /* Mobile Menu */
-    .menu-toggle { display: none; flex-direction: column; cursor: pointer; }
-    .bar { width: 25px; height: 3px; background: #fff; margin: 4px 0; transition: .3s; }
-    @media (max-width: 768px) {
-      nav { display: none; flex-direction: column; position: absolute; top: 60px; right: 20px;
-            background: rgba(0,0,0,0.9); padding: 20px; border-radius: 10px; }
-      nav.active { display: flex; }
-      .menu-toggle { display: flex; }
-    }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-    /* Sections */
-    section { padding: 120px 20px; text-align: center; }
-    #hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; background: rgba(0,0,0,0.4); }
-    #hero h2 { font-size: 48px; margin-bottom: 20px; }
-    #hero p { font-size: 20px; max-width: 700px; margin-bottom: 30px; }
-    .btn { padding: 12px 24px; background: #38bdf8; border: none; border-radius: 25px; color: #fff;
-           font-size: 16px; cursor: pointer; text-decoration: none; transition: background .3s; }
-    .btn:hover { background: #0ea5e9; }
+        .connection-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-    #mission h2, #features h2, #statistics h2 { font-size: 36px; margin-bottom: 20px; }
-    #mission p { font-size: 18px; max-width: 800px; margin: 0 auto; }
+        .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
 
-    .features-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-    .feature { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;
-               width: 280px; transition: transform .3s; }
-    .feature:hover { transform: translateY(-10px); }
+        .connection-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: connect 4s ease-in-out infinite;
+        }
 
-    /* Stats */
-    #statistics .stats { display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; }
-    .stat { font-size: 28px; }
-    .stat span { display: block; font-size: 50px; font-weight: bold; color: #38bdf8; }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
 
-    /* Footer */
-    footer { padding: 40px; background: rgba(0,0,0,0.6); text-align: center; }
+        @keyframes connect {
+            0%, 100% { opacity: 0; width: 0; }
+            50% { opacity: 1; width: 200px; }
+        }
 
-    /* Background Canvas */
-    canvas#bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; }
-  </style>
+        .container {
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 50px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            max-height: 70px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #ff6b9d;
+            transform: translateY(-2px);
+        }
+
+        .beta-chat-btn {
+            background: linear-gradient(135deg, #ff6b9d, #c471ed);
+            padding: 12px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white !important;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
+            border: 2px solid transparent;
+        }
+
+        .beta-chat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 101;
+        }
+
+        .mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 50px 50px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1000px;
+            z-index: 20;
+        }
+
+        .cic-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero-content h1 {
+            font-size: 4.2rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff, #ff6b9d, #12c2e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            line-height: 1.1;
+            animation: fadeInUp 1.2s ease forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            animation: fadeInUp 1.4s ease forwards;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            animation: fadeInUp 1.6s ease forwards;
+        }
+
+        .connection-options {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1.8s ease forwards;
+        }
+
+        .option-btn {
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .need-help-btn {
+            background: linear-gradient(135deg, #ff6b9d, #ff8a80);
+            color: white;
+        }
+
+        .need-help-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+        }
+
+        .here-to-help-btn {
+            background: linear-gradient(135deg, #12c2e9, #4facfe);
+            color: white;
+        }
+
+        .here-to-help-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(18, 194, 233, 0.4);
+        }
+
+        .mission-section {
+            padding: 100px 50px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .mission-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .mission-content h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #ff6b9d;
+            font-weight: 700;
+        }
+
+        .mission-text {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .community-focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #12c2e9;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .features-section {
+            padding: 100px 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 60px;
+            color: #12c2e9;
+            font-weight: 700;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 157, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(255, 107, 157, 0.2);
+            border: 1px solid rgba(255, 107, 157, 0.3);
+        }
+
+        .feature-emoji {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #12c2e9;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .safety-section {
+            padding: 100px 50px;
+            background: rgba(18, 194, 233, 0.05);
+            text-align: center;
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .safety-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .safety-item h4 {
+            color: #ff6b9d;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-section {
+            padding: 80px 50px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(18, 194, 233, 0.1));
+        }
+
+        .cta-content h2 {
+            font-size: 2.8rem;
+            margin-bottom: 25px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .cta-content p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ff6b9d, #12c2e9);
+            color: white;
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 35px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
+        }
+
+        footer {
+            padding: 60px 50px 40px;
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .cic-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .cic-info h4 {
+            color: #12c2e9;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .cic-info p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 20px;
+            }
+
+            .logo {
+                max-height: 45px;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                transition: left 0.3s ease;
+                z-index: 99;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.5rem;
+                padding: 15px;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+            }
+
+            .beta-chat-btn {
+                padding: 15px 35px;
+                font-size: 1.3rem;
+                margin-top: 20px;
+            }
+
+            .hero {
+                padding: 100px 25px 50px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.8rem;
+                margin-bottom: 20px;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.4rem;
+                margin-bottom: 25px;
+            }
+            
+            .hero-description {
+                font-size: 1.1rem;
+                margin-bottom: 40px;
+            }
+            
+            .connection-options {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .option-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+                padding: 18px 30px;
+                font-size: 1.2rem;
+            }
+
+            .mission-section, .features-section, .safety-section {
+                padding: 80px 25px;
+            }
+
+            .mission-content h2, .section-title {
+                font-size: 2.2rem;
+            }
+
+            .mission-text {
+                font-size: 1.2rem;
+            }
+            
+            .features-grid, .safety-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .feature-card {
+                padding: 30px;
+            }
+
+            .cta-section {
+                padding: 60px 25px;
+            }
+
+            footer {
+                padding: 40px 25px 30px;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
+    <div class="connection-dots" id="connectionDots"></div>
+    
+    <div class="container">
+        <header>
+            <nav>
+                <div>
+                    <img src="logo.png" alt="10 More Minutes Community Interest Company" class="logo">
+                </div>
+                
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
 
-  <header>
-    <h1>10 More Minutes</h1>
-    <div class="menu-toggle" id="menu-toggle">
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="nav-links" id="navLinks">
+                    <a href="#mission">Our Mission</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#safety">Safety & Trust</a>
+                    <a href="#about">About CIC</a>
+                    <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Join Beta</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>10 More Minutes</h1>
+                    <p class="hero-subtitle">More than just a Peer-to-peer mental health support </p>
+                    <p class="hero-description">
+                        A Community Interest Company dedicated to reducing loneliness and emotional distress through immediate, authentic peer-to-peer conversations. Quick support in manageable 10-minute sessions for people of all ages experiencing poor mental health.
+                    </p>
+                    
+                    <div class="connection-options">
+                        <a href="https://10moreminutes.co.uk/beta-chat?mode=need-help" class="option-btn need-help-btn">
+                            <span>💙</span>
+                            I need support
+                        </a>
+                        <a href="https://10moreminutes.co.uk/beta-chat?mode=here-to-help" class="option-btn here-to-help-btn">
+                            <span>🤝</span>
+                            I can help others
+                        </a>
+                    </div>
+                </div>
+            </section>
+             <!-- NEW STATISTICS SECTION -->
+            <section class="statistics-section" id="statistics">
+                <div class="stats-container">
+                    <div class="stats-header fade-in">
+                        <h2>The Mental Health Crisis is Real</h2>
+                        <p>
+                            Loneliness and mental health challenges are affecting millions across the UK. 
+                            The evidence shows immediate peer support can make a measurable difference in people's lives.
+                        </p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">88%</span>
+                            <div class="stat-label">of Young Adults Experience Loneliness</div>
+                            <div class="stat-description">Nearly 9 in 10 Britons aged 18-24 experience loneliness to some degree, with 24% suffering often</div>
+                        </div>
+
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">26%</span>
+                            <div class="stat-label">Feel Lonely Often or Always</div>
+                            <div class="stat-description">Over a quarter of UK adults report feeling lonely often, always or some of the time</div>
+                        </div>
+
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">1M+</span>
+                            <div class="stat-label">Older People Often Lonely</div>
+                            <div class="stat-description">Nearly a million older people in the UK are chronically lonely according to Age UK research</div>
+                        </div>
+
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">31%</span>
+                            <div class="stat-label">Have High Anxiety Levels</div>
+                            <div class="stat-description">Around one-third of adults report having high levels of anxiety, showing widespread mental health struggles</div>
+                        </div>
+
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">14%</span>
+                            <div class="stat-label">Increase in People Living Alone</div>
+                            <div class="stat-description">Single-person households have surged by 14% in the past decade, fueling rising isolation</div>
+                        </div>
+
+                        <div class="stat-card fade-in">
+                            <span class="stat-number">6%</span>
+                            <div class="stat-label">Feel Lonely Often or Always</div>
+                            <div class="stat-description">6% of adults report chronic loneliness - that's nearly 4 million people needing support</div>
+                        </div>
+                    </div>
+
+            <section class="mission-section" id="mission">
+                <div class="mission-content fade-in">
+                    <h2>Our Community Purpose</h2>
+                    <div class="mission-text">
+                        <p>As a Community Interest Company, 10 More Minutes exists to benefit people of all ages experiencing poor mental health, loneliness, or emotional distress. We go beyond providing a mental health app, we're building a community platform where like minded people can come together to support one another, reduce isolation, and foster genuine human connection.</p>
+                    </div>
+                    
+                    <div class="community-focus">
+                        <h3 style="color: #12c2e9; margin-bottom: 20px;">Building Sustainable Peer Networks</h3>
+                        <p class="mission-text">Our service offers quick, almost instant support in short and manageable conversations: ten minutes at a time, giving people a safe space to be heard when they need it most. Over time, we create sustainable peer-to-peer support networks that empower individuals to both give and receive help, linking people with similar experiences to build genuine, empathetic, and deeply impactful understanding.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features-section" id="how-it-works">
+                <h2 class="section-title">How We Create Community Benefit</h2>
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">⚡</span>
+                        <h3>Immediate Access</h3>
+                        <p>The community benefits by having immediate access to short, manageable emotional support sessions, reducing feelings of isolation at the moment they need it most.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">🤝</span>
+                        <h3>Authentic Connections</h3>
+                        <p>We match people with similar experiences to create authentic connections rooted in shared understanding, reducing stigma and increasing feelings of belonging.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">🏥</span>
+                        <h3>Professional Pathways</h3>
+                        <p>The community benefits by ensuring individuals are guided to the right level of professional care when peer support alone is not enough, improving safety and wellbeing outcomes.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">🏢</span>
+                        <h3>Workplace Integration</h3>
+                        <p>We help organizations and community groups embed 10 More Minutes into their wellbeing practices as first-line mental health support, normalizing conversations and reducing stigma.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">🔄</span>
+                        <h3>Mutual Support</h3>
+                        <p>Users can both give and receive support, fostering empathy, mutual understanding, and resilience while feeling valued whether seeking or providing help.</p>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <span class="feature-emoji">📈</span>
+                        <h3>Continuous Improvement</h3>
+                        <p>The community benefits by having a platform that evolves to meet their needs through user feedback, ensuring it remains relevant, effective, and user-led.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="safety-section" id="safety">
+                <h2 class="section-title">Safety & Trust</h2>
+                <div class="safety-grid">
+                    <div class="safety-item fade-in">
+                        <h4>🔒 Safe & Anonymous</h4>
+                        <p>Complete anonymity with optional lightweight profiles. You control what you share and when.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>🎯 Trained Support</h4>
+                        <p>Volunteer training and ongoing support ensures quality peer-to-peer connections.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>🚨 Crisis Support</h4>
+                        <p>Clear pathways to professional mental health services and crisis support when needed.</p>
+                    </div>
+                    
+                    <div class="safety-item fade-in">
+                        <h4>📋 Community Guidelines</h4>
+                        <p>Clear community standards ensure a safe, supportive environment for all users.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <div class="cta-content">
+                    <h2>Ready to Connect?</h2>
+                    <p>Join our beta and be part of building a community platform that creates genuine impact—where every conversation can make a difference.</p>
+                    <a href="https://10moreminutes.co.uk/beta-chat" class="cta-button">Start Connecting Now</a>
+                </div>
+            </section>
+        </main>
+
+        <footer id="about">
+            <div class="footer-content">
+                <div class="cic-info">
+                    <h4>About 10 More Minutes CIC</h4>
+                    <p>10 More Minutes is a Community Interest Company (CIC) registered in England (16696773). As a CIC, we are legally required to use our profits and assets for community benefit. Any surplus we generate is reinvested directly into developing and delivering our service to further our community purpose.</p>
+                    <p>This includes maintaining and improving our platform, expanding access, providing training for volunteers, conducting outreach to workplaces and communities, and ensuring long-term sustainability of peer-to-peer mental health support.</p>
+                </div>
+                
+                <p>&copy; 2025 10 More Minutes Community Interest Company. All rights reserved.</p>
+                <p>Dedicated to reducing loneliness and supporting mental wellbeing in our communities.</p>
+            </div>
+        </footer>
     </div>
-    <nav id="nav">
-      <a href="#hero">Home</a>
-      <a href="#mission">Mission</a>
-      <a href="#features">Features</a>
-      <a href="#statistics">Statistics</a>
-      <a href="#join">Join</a>
-    </nav>
-  </header>
 
-  <!-- Hero -->
-  <section id="hero">
-    <h2>Welcome to 10 More Minutes</h2>
-    <p>A community-driven space where people can support each other, find hope, and connect with honesty.</p>
-    <a href="#join" class="btn">Get Started</a>
-  </section>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navLinks = document.getElementById('navLinks');
 
-  <!-- Mission -->
-  <section id="mission">
-    <h2>Our Mission</h2>
-    <p>We believe sometimes all you need is just 10 more minutes—whether it’s to talk, to listen, or to find someone who understands. 
-       Our mission is to create a safe, supportive, and honest space for mental health conversations.</p>
-  </section>
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
 
-  <!-- Features -->
-  <section id="features">
-    <h2>Features</h2>
-    <div class="features-container">
-      <div class="feature"><h3>Instant Connection</h3><p>Connect quickly with someone who is here to listen.</p></div>
-      <div class="feature"><h3>Stay Anonymous</h3><p>Choose how much or little to share in your profile.</p></div>
-      <div class="feature"><h3>Supportive Community</h3><p>A peer-to-peer network built on honesty and care.</p></div>
-    </div>
-  </section>
-
-  <!-- Statistics -->
-  <section id="statistics">
-    <h2>Our Impact</h2>
-    <div class="stats">
-      <div class="stat"><span id="users">0</span>Users Connected</div>
-      <div class="stat"><span id="minutes">0</span>Minutes Shared</div>
-      <div class="stat"><span id="support">0</span>Support Sessions</div>
-    </div>
-  </section>
-
-  <!-- Join -->
-  <section id="join">
-    <h2>Join the Movement</h2>
-    <p>Be part of a supportive community. Give help, get help, and make a difference.</p>
-    <a href="#" class="btn">Sign Up Today</a>
-  </section>
-
-  <footer>
-    <p>© 2025 10 More Minutes. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // Mobile menu toggle
-    document.getElementById('menu-toggle').addEventListener('click', () => {
-      document.getElementById('nav').classList.toggle('active');
-    });
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e){
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'});
-      });
-    });
-
-    // Stats counter
-    function animateValue(id, start, end, duration) {
-      let obj = document.getElementById(id);
-      let startTime = null;
-      function step(timestamp) {
-        if (!startTime) startTime = timestamp;
-        let progress = Math.min((timestamp - startTime) / duration, 1);
-        obj.innerHTML = Math.floor(progress * (end - start) + start);
-        if (progress < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-    window.addEventListener('load', () => {
-      animateValue("users", 0, 1200, 2000);
-      animateValue("minutes", 0, 5400, 2500);
-      animateValue("support", 0, 850, 2200);
-    });
-
-    // Background animation
-    const canvas = document.getElementById('bgCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let dots = [];
-    for (let i=0; i<100; i++) {
-      dots.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        vx: (Math.random()-0.5)*1,
-        vy: (Math.random()-0.5)*1,
-        r: Math.random()*2+1
-      });
-    }
-    function draw() {
-      let gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-      gradient.addColorStop(0, "#0f172a");
-      gradient.addColorStop(1, "#1e3a8a");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-
-      dots.forEach(dot=>{
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-        if(dot.x<0||dot.x>canvas.width) dot.vx*=-1;
-        if(dot.y<0||dot.y>canvas.height) dot.vy*=-1;
-        ctx.beginPath();
-        ctx.arc(dot.x,dot.y,dot.r,0,Math.PI*2);
-        ctx.fillStyle="#38bdf8";
-        ctx.fill();
-      });
-
-      for (let i=0; i<dots.length; i++) {
-        for (let j=i+1; j<dots.length; j++) {
-          let dx=dots[i].x-dots[j].x;
-          let dy=dots[i].y-dots[j].y;
-          let dist=Math.sqrt(dx*dx+dy*dy);
-          if(dist<100){
-            ctx.beginPath();
-            ctx.moveTo(dots[i].x,dots[i].y);
-            ctx.lineTo(dots[j].x,dots[j].y);
-            ctx.strokeStyle="rgba(56,189,248,0.2)";
-            ctx.stroke();
-          }
+        // Share website function
+        function shareWebsite() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '10 More Minutes - Peer Support When You Need It Most',
+                    text: 'A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations.',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback to copying URL to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Website URL copied to clipboard! Share it with someone who might benefit from peer support.');
+                }).catch(() => {
+                    // Final fallback - show URL in alert
+                    alert('Share this URL: ' + window.location.href);
+                });
+            }
         }
-      }
-      requestAnimationFrame(draw);
-    }
-    draw();
 
-    window.addEventListener('resize', ()=>{
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script>
+        // Donation functions
+        function donate(amount) {
+            // In a real implementation, this would integrate with Stripe or similar
+            alert(`Thank you for your interest in donating £${amount}! This would integrate with a secure payment processor like Stripe. Your donation directly supports peer mental health support in our communities.`);
+        }
+
+        function donateMonthly(amount) {
+            alert(`Thank you for considering £${amount}/month recurring support! This would set up a monthly subscription through a secure payment processor. Monthly donations provide the most sustainable impact for our community mission.`);
+        }
+
+        function customDonation() {
+            const amount = prompt("Enter your desired donation amount (£):");
+            if (amount && !isNaN(amount) && amount > 0) {
+                donate(amount);
+            }
+        }
+
+        function customMonthly() {
+            const amount = prompt("Enter your desired monthly support amount (£):");
+            if (amount && !isNaN(amount) && amount > 0) {
+                donateMonthly(amount);
+            }
+        }
+
+        // Close mobile menu when clicking on a link
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                mobileMenuToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Create connection visualization
+        function createConnectionDots() {
+            const container = document.getElementById('connectionDots');
+            const dotCount = 20;
+            
+            for (let i = 0; i < dotCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(dot);
+                
+                // Occasionally create connection lines
+                if (Math.random() > 0.7) {
+                    const line = document.createElement('div');
+                    line.className = 'connection-line';
+                    line.style.left = Math.random() * 80 + '%';
+                    line.style.top = Math.random() * 80 + '%';
+                    line.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    line.style.animationDelay = Math.random() * 4 + 's';
+                    container.appendChild(line);
+                }
+            }
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = (index * 0.2) + 's';
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 0, 0, 0.7)';
+            } else {
+                header.style.background = 'rgba(0, 0, 0, 0.3)';
+            }
+        });
+
+        // Add connection sparkle effect on hover over main CTAs
+        document.querySelectorAll('.option-btn, .cta-button').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                const sparkles = 3;
+                for (let i = 0; i < sparkles; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        sparkle.style.position = 'absolute';
+                        sparkle.style.left = (this.offsetLeft + Math.random() * this.offsetWidth) + 'px';
+                        sparkle.style.top = (this.offsetTop + Math.random() * this.offsetHeight) + 'px';
+                        sparkle.style.width = '8px';
+                        sparkle.style.height = '8px';
+                        sparkle.style.background = '#ff6b9d';
+                        sparkle.style.borderRadius = '50%';
+                        sparkle.style.pointerEvents = 'none';
+                        sparkle.style.zIndex = '1000';
+                        sparkle.style.animation = 'sparkleFloat 1.5s ease-out forwards';
+                        
+                        if (!document.getElementById('sparkle-styles')) {
+                            const style = document.createElement('style');
+                            style.id = 'sparkle-styles';
+                            style.textContent = `
+                                @keyframes sparkleFloat {
+                                    0% {
+                                        transform: translateY(0) scale(0);
+                                        opacity: 1;
+                                    }
+                                    100% {
+                                        transform: translateY(-50px) scale(1.5);
+                                        opacity: 0;
+                                    }
+                                }
+                            `;
+                            document.head.appendChild(style);
+                        }
+                        
+                        document.body.appendChild(sparkle);
+                        
+                        setTimeout(() => sparkle.remove(), 1500);
+                    }, i * 200);
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createConnectionDots();
+            
+            // Observe elements for fade-in animation
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
 </html>
