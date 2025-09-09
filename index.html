@@ -586,6 +586,101 @@
             box-shadow: 0 15px 40px rgba(255, 107, 157, 0.5);
         }
 
+        /* NEW CONTACT SECTION */
+        .contact-section {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(18, 194, 233, 0.1));
+            backdrop-filter: blur(10px);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-content h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #12c2e9;
+            font-weight: 700;
+        }
+
+        .contact-content p {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 157, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .social-link:hover::before {
+            left: 100%;
+        }
+
+        .social-link:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.3);
+            border: 1px solid rgba(255, 107, 157, 0.4);
+        }
+
+        .social-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff6b9d, #12c2e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .social-platform {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #12c2e9;
+        }
+
+        .social-description {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+        }
+
         footer {
             padding: 60px 50px 40px;
             background: rgba(0, 0, 0, 0.5);
@@ -702,21 +797,32 @@
                 font-size: 1.2rem;
             }
 
-            .statistics-section, .mission-section, .features-section, .safety-section {
+            .statistics-section, .mission-section, .features-section, .safety-section, .contact-section {
                 padding: 80px 25px;
             }
 
-            .stats-header h2, .mission-content h2, .section-title {
+            .stats-header h2, .mission-content h2, .section-title, .contact-content h2 {
                 font-size: 2.2rem;
             }
 
-            .mission-text {
+            .mission-text, .contact-content p {
                 font-size: 1.2rem;
             }
             
             .stats-grid, .features-grid, .safety-grid {
                 grid-template-columns: 1fr;
                 gap: 30px;
+            }
+
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .social-link {
+                width: 100%;
+                max-width: 300px;
             }
 
             .feature-card {
@@ -788,6 +894,7 @@
                     <a href="#statistics">The Need</a>
                     <a href="#how-it-works">How It Works</a>
                     <a href="#safety">Safety & Trust</a>
+                    <a href="#contact">Contact</a>
                     <a href="#about">About CIC</a>
                     <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Join Beta</a>
                 </div>
@@ -957,6 +1064,37 @@
                     <h2>Ready to Connect?</h2>
                     <p>Join our beta and be part of building a community platform that creates genuine impact—where every conversation can make a difference.</p>
                     <a href="https://10moreminutes.co.uk/beta-chat" class="cta-button">Start Connecting Now</a>
+                </div>
+            </section>
+
+            <!-- NEW CONTACT SECTION -->
+            <section class="contact-section" id="contact">
+                <div class="contact-content">
+                    <h2>Connect With Us</h2>
+                    <p>
+                        We'd love to hear from you! Whether you have questions about our service, want to get involved, 
+                        or simply want to stay connected with our community mission, reach out through any of these channels.
+                    </p>
+                    
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/10.moreminutes/" target="_blank" rel="noopener noreferrer" class="social-link">
+                            <div class="social-icon">📸</div>
+                            <div class="social-platform">Instagram</div>
+                            <div class="social-description">Follow our journey and community stories</div>
+                        </a>
+                        
+                        <a href="https://www.linkedin.com/company/10-more-minutes/" target="_blank" rel="noopener noreferrer" class="social-link">
+                            <div class="social-icon">🔗</div>
+                            <div class="social-platform">LinkedIn</div>
+                            <div class="social-description">Professional updates and partnerships</div>
+                        </a>
+                        
+                        <a href="mailto:tenmoreminutess@gmail.com" class="social-link">
+                            <div class="social-icon">📧</div>
+                            <div class="social-platform">Email</div>
+                            <div class="social-description">Direct contact for inquiries and support</div>
+                        </a>
+                    </div>
                 </div>
             </section>
         </main>
