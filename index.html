@@ -598,15 +598,18 @@
 
 .contact-content h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #FF6B6B; /* accent heading color */
+    font-size: 3rem;
+            margin-bottom: 30px;
+            color: #12c2e9;
+            font-weight: 700;
 }
 
 .contact-content p {
     text-align: center;
-    max-width: 600px;
-    margin: 0 auto 40px auto;
-    color: #555; /* softer paragraph color */
+    font-size: 1.3rem;
+            margin-bottom: 50px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
 }
 
 .social-links {
@@ -619,14 +622,21 @@
 
 .social-link {
     display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #333; /* keeps text readable */
-    background-color: #fff; /* card background */
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
 }
 
 .social-link:hover {
@@ -637,9 +647,12 @@
 
 .social-icon {
     font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI', sans-serif;
-    font-size: 2.5rem;
-    margin-right: 15px;
-    flex-shrink: 0;
+   font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff6b9d, #12c2e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
 }
 
 .social-info .social-platform {
