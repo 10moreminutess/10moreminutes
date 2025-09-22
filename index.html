@@ -1,181 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>10 More Minutes Community Interest Company - Peer Support When You Need It Most</title>
-    <meta name="description" content="A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations. Reducing isolation and building genuine connections for all ages.">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10 More Minutes Community Interest Company - Peer Support When You Need It Most</title>
+  <meta name="description" content="A Community Interest Company providing immediate peer-to-peer mental health support through 10-minute conversations. Reducing isolation and building genuine connections for all ages.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(-45deg, #004f61, #568992, #a4bfc9, #004f61);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
-            color: #ffffff;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(-45deg, #004f61, #568992, #a4bfc9, #004f61);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      color: #ffffff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-        .connection-dots .dot {
-            background: rgba(255, 255, 255, 0.4);
-        }
+    /* Header + Nav */
+    header {
+      position: fixed; top: 0; width: 100%;
+      padding: 15px 50px;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      z-index: 100;
+    }
+    .logo { max-height: 70px; width: auto; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: #f8d84f; }
 
-        .connection-line {
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
+    .beta-chat-btn {
+      background: linear-gradient(135deg, #004f61, #568992);
+      padding: 12px 28px;
+      border-radius: 30px;
+      color: #fff !important;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0,79,97,0.3);
+      border: 2px solid transparent;
+    }
+    .beta-chat-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,79,97,0.5);
+      border: 2px solid #f8d84f;
+    }
 
-        header {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    /* Hero */
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 50px 50px; }
+    .hero-content h1 {
+      font-size: 4.2rem;
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #ffffff, #f8d84f, #568992);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+    .hero-subtitle { font-size: 1.8rem; margin-bottom: 30px; color: rgba(255,255,255,0.9); }
 
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+    /* Buttons */
+    .option-btn { padding: 20px 40px; border-radius: 40px; font-size: 1.3rem; font-weight: 600; }
+    .need-help-btn { background: linear-gradient(135deg, #004f61, #568992); color: #ffffff; }
+    .here-to-help-btn { background: linear-gradient(135deg, #f8d84f, #a4bfc9); color: #004f61; }
 
-        .nav-links a:hover {
-            color: #f8d84f; /* yellow accent */
-        }
+    /* Section Titles */
+    .stats-header h2,
+    .mission-content h2,
+    .section-title,
+    .contact-content h2 { color: #f8d84f; }
 
-        .beta-chat-btn {
-            background: linear-gradient(135deg, #004f61, #568992);
-            padding: 12px 28px;
-            border-radius: 30px;
-            text-decoration: none;
-            color: #ffffff !important;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 79, 97, 0.3);
-            border: 2px solid transparent;
-        }
+    .feature-card h3, .cic-info h4 { color: #568992; }
+    .safety-item h4 { color: #f8d84f; }
 
-        .beta-chat-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 79, 97, 0.5);
-            border: 2px solid #f8d84f;
-        }
+    /* CTA */
+    .cta-section { background: linear-gradient(135deg, rgba(0,79,97,0.1), rgba(164,191,201,0.1)); }
+    .cta-button {
+      background: linear-gradient(135deg, #004f61, #568992);
+      color: #ffffff;
+      padding: 18px 45px;
+      border-radius: 35px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      box-shadow: 0 8px 25px rgba(0,79,97,0.3);
+    }
+    .cta-button:hover { box-shadow: 0 15px 40px rgba(0,79,97,0.5); }
 
-        .hero-content h1 {
-            font-size: 4.2rem;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #ffffff, #f8d84f, #568992);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        .need-help-btn {
-            background: linear-gradient(135deg, #004f61, #568992);
-            color: #ffffff;
-        }
-
-        .need-help-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(0, 79, 97, 0.4);
-        }
-
-        .here-to-help-btn {
-            background: linear-gradient(135deg, #f8d84f, #a4bfc9);
-            color: #004f61;
-        }
-
-        .here-to-help-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(164, 191, 201, 0.4);
-        }
-
-        .statistics-section {
-            background: linear-gradient(135deg, rgba(0, 79, 97, 0.05), rgba(164, 191, 201, 0.05));
-        }
-
-        .stats-header h2 {
-            font-size: 3rem;
-            color: #f8d84f;
-        }
-
-        .stat-number {
-            background: linear-gradient(135deg, #568992, #f8d84f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .evidence-card {
-            border-left: 4px solid #568992;
-        }
-
-        .evidence-card h4 {
-            color: #568992;
-        }
-
-        .mission-content h2,
-        .section-title {
-            color: #f8d84f;
-        }
-
-        .community-focus {
-            border-left: 4px solid #568992;
-        }
-
-        .feature-card h3 {
-            color: #568992;
-        }
-
-        .safety-item h4 {
-            color: #f8d84f;
-        }
-
-        .cta-section {
-            background: linear-gradient(135deg, rgba(0, 79, 97, 0.1), rgba(164, 191, 201, 0.1));
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #004f61, #568992);
-            color: #ffffff;
-            box-shadow: 0 8px 25px rgba(0, 79, 97, 0.3);
-        }
-
-        .cta-button:hover {
-            box-shadow: 0 15px 40px rgba(0, 79, 97, 0.5);
-        }
-
-        .contact-section {
-            background: linear-gradient(135deg, rgba(0, 79, 97, 0.1), rgba(164, 191, 201, 0.1));
-            color: #ffffff;
-        }
-
-        .contact-content h2 {
-            color: #f8d84f;
-        }
-
-        .social-icon {
-            background: linear-gradient(135deg, #004f61, #568992);
-        }
-
-        .social-info .social-platform {
-            color: #f8d84f;
-        }
-
-        .cic-info h4 {
-            color: #568992;
-        }
-    </style>
+    /* Contact */
+    .contact-section { background: linear-gradient(135deg, rgba(0,79,97,0.1), rgba(164,191,201,0.1)); }
+    .social-icon {
+      background: linear-gradient(135deg, #004f61, #568992);
+      border-radius: 50%;
+      width: 70px; height: 70px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+    }
+    .social-info .social-platform { color: #f8d84f; }
+  </style>
 </head>
 <body>
-    <!-- (rest of your HTML structure remains unchanged, only CSS was updated with new brand colours) -->
+  <div class="container">
+    <header>
+      <nav>
+        <div><img src="logo.png" alt="10 More Minutes CIC" class="logo"></div>
+        <div class="nav-links">
+          <a href="#mission">Our Mission</a>
+          <a href="#statistics">The Need</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#safety">Safety & Trust</a>
+          <a href="#contact">Contact</a>
+          <a href="#about">About CIC</a>
+          <a href="https://10moreminutes.co.uk/beta-chat" class="beta-chat-btn">🌟 Join Beta</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="hero-content">
+          <h1>10 More Minutes</h1>
+          <p class="hero-subtitle">More than just Peer-to-peer mental health support</p>
+          <div class="connection-options">
+            <a href="https://10moreminutes.co.uk/beta-chat?mode=need-help" class="option-btn need-help-btn">💙 I need support</a>
+            <a href="https://10moreminutes.co.uk/beta-chat?mode=here-to-help" class="option-btn here-to-help-btn">🤝 I can help others</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Your statistics, mission, features, safety, CTA, contact, and footer content go here exactly as in your current file -->
+    </main>
+
+    <footer id="about">
+      <div class="footer-content">
+        <div class="cic-info">
+          <h4>About 10 More Minutes CIC</h4>
+          <p>10 More Minutes is a Community Interest Company registered in England (16696773). We reinvest any surplus directly into developing and delivering our service to further our community purpose.</p>
+        </div>
+        <p>&copy; 2025 10 More Minutes CIC. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
 </body>
 </html>
