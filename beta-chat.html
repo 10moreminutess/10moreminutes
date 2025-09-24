@@ -79,6 +79,130 @@
             animation: pulse 2s ease-in-out infinite;
         }
 
+        /* Timer Styles */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .timer-container.warning {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+            animation: timerPulse 1s ease-in-out infinite;
+        }
+
+        .timer-container.critical {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            animation: timerPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+
+        .timer-icon {
+            font-size: 16px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ff6b9d, #c471ed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-text {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -378,6 +502,14 @@
             .message {
                 max-width: 85%;
             }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -389,6 +521,10 @@
                 <div class="connection-status" id="connectionStatus">
                     <div class="status-dot"></div>
                     <span id="statusText">Beta Mode</span>
+                </div>
+                <div class="timer-container" id="timerContainer">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timerDisplay">10:00</span>
                 </div>
             </div>
             <div class="header-actions">
@@ -440,10 +576,32 @@
         </div>
     </div>
 
+    <!-- Timer Extension Modal -->
+    <div class="modal-overlay" id="timerModal">
+        <div class="modal-content">
+            <h2 class="modal-title">⏰ Time's Almost Up!</h2>
+            <p class="modal-text">
+                Your 10-minute conversation is about to end. Would both of you like to continue talking for another 10 minutes?
+            </p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="extendTimer()">
+                    ✨ Yes, 10 More Minutes!
+                </button>
+                <button class="modal-btn secondary" onclick="declineExtension()">
+                    👋 End Conversation
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let chatMode = null;
         let isTyping = false;
         let messageCount = 0;
+        let timerInterval = null;
+        let timeRemaining = 600; // 10 minutes in seconds
+        let timerStarted = false;
+        let extensionRequested = false;
 
         // Get mode from URL parameter
         const urlParams = new URLSearchParams(window.location.search);
@@ -468,7 +626,98 @@
             setTimeout(() => {
                 updateConnectionStatus('Connected', '#4CAF50');
                 startChat(mode);
+                startTimer();
             }, 2000);
+        }
+
+        function startTimer() {
+            if (timerStarted) return;
+            
+            timerStarted = true;
+            document.getElementById('timerContainer').style.display = 'flex';
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                // Show modal when 30 seconds remaining
+                if (timeRemaining === 30 && !extensionRequested) {
+                    showTimerModal();
+                }
+                
+                // Auto end chat if time runs out
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    autoEndChat();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('timerDisplay').textContent = display;
+            
+            const timerContainer = document.getElementById('timerContainer');
+            
+            // Change timer appearance based on time remaining
+            if (timeRemaining <= 60) { // Last minute - critical
+                timerContainer.className = 'timer-container critical';
+            } else if (timeRemaining <= 180) { // Last 3 minutes - warning
+                timerContainer.className = 'timer-container warning';
+            } else {
+                timerContainer.className = 'timer-container';
+            }
+        }
+
+        function showTimerModal() {
+            extensionRequested = true;
+            document.getElementById('timerModal').style.display = 'flex';
+            addSystemMessage("⏰ Time extension request sent to both participants...");
+            
+            // Simulate the other person's response after a few seconds
+            setTimeout(() => {
+                const responses = [
+                    "The other person also wants to continue! ✨",
+                    "Both participants agreed to extend the conversation! 🎉",
+                    "Great news! You both chose to keep talking! 💫"
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addSystemMessage(randomResponse);
+            }, 2000);
+        }
+
+        function extendTimer() {
+            document.getElementById('timerModal').style.display = 'none';
+            timeRemaining = 600; // Reset to 10 minutes
+            extensionRequested = false;
+            
+            addSystemMessage("🎉 Timer extended! You have another 10 minutes to chat.");
+            addMessage("Yay! I'm so glad we can keep talking. This conversation means a lot to me.", 'other');
+            
+            updateTimerDisplay();
+        }
+
+        function declineExtension() {
+            document.getElementById('timerModal').style.display = 'none';
+            addSystemMessage("Conversation will end when timer reaches zero.");
+            addMessage("I understand. Thank you for this time together - it was really meaningful.", 'other');
+        }
+
+        function autoEndChat() {
+            addSystemMessage("⏰ Time's up! Your 10-minute conversation has ended. Thank you for connecting.");
+            
+            document.getElementById('messageInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            updateConnectionStatus('Session Ended', '#f44336');
+            
+            setTimeout(() => {
+                if (confirm('Your session has ended. Would you like to start a new conversation?')) {
+                    location.reload();
+                }
+            }, 3000);
         }
 
         function updateConnectionStatus(text, color) {
@@ -480,16 +729,16 @@
             const container = document.getElementById('messagesContainer');
             
             if (mode === 'needHelp') {
-                addSystemMessage("You've been connected with someone who wants to help. Feel free to share what's on your mind.");
+                addSystemMessage("You've been connected with someone who wants to help. Feel free to share what's on your mind. You have 10 minutes together.");
                 
                 setTimeout(() => {
-                    addMessage("Hi there! I saw you wanted to talk to someone. I'm here and ready to listen. How are you feeling right now?", 'other');
+                    addMessage("Hi there! I saw you wanted to talk to someone. I'm here and ready to listen for the next 10 minutes. How are you feeling right now?", 'other');
                 }, 1500);
             } else {
-                addSystemMessage("You've been connected with someone who needs support. Thank you for being here for them.");
+                addSystemMessage("You've been connected with someone who needs support. Thank you for being here for them. You have 10 minutes together.");
                 
                 setTimeout(() => {
-                    addMessage("Hey... I'm not doing so great today. Thanks for being willing to listen. It means more than you know.", 'other');
+                    addMessage("Hey... I'm not doing so great today. Thanks for being willing to listen for these 10 minutes. It means more than you know.", 'other');
                 }, 1500);
             }
         }
@@ -527,7 +776,7 @@
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             
-            if (message) {
+            if (message && !input.disabled) {
                 addMessage(message, 'own');
                 input.value = '';
                 
@@ -605,7 +854,11 @@
 
         function endChat() {
             if (confirm('Are you sure you want to end this chat?')) {
-                addSystemMessage("Chat ended. Thank you for using 10 More Minutes. Remember, you're not alone.");
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                addSystemMessage("Chat ended early. Thank you for using 10 More Minutes. Remember, you're not alone.");
                 
                 document.getElementById('messageInput').disabled = true;
                 document.getElementById('sendBtn').disabled = true;
@@ -646,6 +899,17 @@ Your safety and wellbeing are the top priority.`);
             } else {
                 btn.style.opacity = '0.7';
                 btn.style.transform = 'scale(1)';
+            }
+        });
+
+        // Handle page visibility changes to pause timer when page is not active
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && timerInterval) {
+                // Optionally pause timer when page is not visible
+                // clearInterval(timerInterval);
+            } else if (!document.hidden && timerStarted && !timerInterval) {
+                // Resume timer when page becomes visible again
+                // startTimer();
             }
         });
     </script>
